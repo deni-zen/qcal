@@ -25,11 +25,5 @@ class TestCase extends \UnitTestCase {
         
     
     }
-    
-    public function testTest() {
-    
-        $this->assertTrue(true);
-    
-    }
 
 }
