@@ -9,7 +9,7 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 
-function pre($var, $exit=false) {
+function pre($var, $exit=true) {
 
     echo '<pre>';
     var_dump($var);

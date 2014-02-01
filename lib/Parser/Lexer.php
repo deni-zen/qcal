@@ -52,6 +52,12 @@ class Lexer {
     
     }
     
+    public function getReader() {
+    
+        return $this->reader;
+    
+    }
+    
     public function getLineNo() {
     
         return $this->lineNo;
@@ -64,23 +70,28 @@ class Lexer {
     
     }
     
+    public function getTokenType() {
+    
+        return $this->tokenType;
+    
+    }
+    
     public function getToken() {
     
         return $this->token;
     
     }
     
+    /**
+     * @todo For now we are enforcing CR LF whether it's there or not
+     */
     protected function handleNewLine($char) {
     
-        if ($char == "\r") {
-            $next = $this->reader->getChar();
-            if ($next == "\n") {
-                return "\r\n";
-            } else {
-                $this->reader->backUp();
-            }
+        $next = $this->reader->getChar();
+        if (!$this->isNewLine($next)) {
+            $this->reader->backUp();
         }
-        return $char;
+        return "\r\n";
     
     }
     
@@ -90,6 +101,7 @@ class Lexer {
         while ($this->isAlpha($char=$this->reader->getChar())) {
             $val .= $char;
         }
+        $this->reader->backUp();
         return $val;
     
     }
@@ -107,6 +119,11 @@ class Lexer {
             } else if ($this->isAlpha($char)) {
                 $this->token = $this->eatAlphaChars($char);
                 $this->tokenType = self::ALPHA;
+            } else if ($this->isColon($char)) {
+                $this->token = $char;
+                $this->tokenType = self::COLON;
+            } else {
+                
             }
             $this->charNo += strlen($this->getToken());
             return $this->tokenType;

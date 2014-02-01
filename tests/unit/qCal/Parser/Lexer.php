@@ -35,6 +35,14 @@ ICALDATA;
     
     }
     
+    public function testGetReader() {
+    
+        $reader = new Parser\Reader("foo");
+        $lexer = new Parser\Lexer($reader);
+        $this->assertIdentical($reader, $lexer->getReader());
+    
+    }
+    
     public function testGetLineNumber() {
     
         $this->assertEqual($this->lexer->getLineNo(), 1);
@@ -50,13 +58,57 @@ ICALDATA;
     public function testNextToken() {
     
         $this->assertNull($this->lexer->getToken());
+        
         $this->assertTrue($this->lexer->nextToken());
         $this->assertEqual($this->lexer->getToken(), "BEGIN");
         $this->assertEqual($this->lexer->getLineNo(), 1);
         $this->assertEqual($this->lexer->getCharNo(), 5);
-        // $this->assertTrue($this->lexer->nextToken());
-        // $this->assertEqual($this->lexer->getToken(), ":");
+        $this->assertEqual($this->lexer->getTokenType(), Parser\Lexer::ALPHA);
+        
+        $this->assertTrue($this->lexer->nextToken());
+        $this->assertEqual($this->lexer->getToken(), ":");
+        $this->assertEqual($this->lexer->getLineNo(), 1);
+        $this->assertEqual($this->lexer->getCharNo(), 6);
+        $this->assertEqual($this->lexer->getTokenType(), Parser\Lexer::COLON);
+        
+        $this->assertTrue($this->lexer->nextToken());
+        $this->assertEqual($this->lexer->getToken(), "VCALENDAR");
+        $this->assertEqual($this->lexer->getLineNo(), 1);
+        $this->assertEqual($this->lexer->getCharNo(), 15);
+        $this->assertEqual($this->lexer->getTokenType(), Parser\Lexer::ALPHA);
+        
+        $this->assertTrue($this->lexer->nextToken());
+        $this->assertEqual($this->lexer->getToken(), "\r\n");
+        $this->assertEqual($this->lexer->getLineNo(), 2);
+        $this->assertEqual($this->lexer->getCharNo(), 0);
+        $this->assertEqual($this->lexer->getTokenType(), Parser\Lexer::NEWLINE);
     
+    }
+    
+    /**
+     * @todo Test various newlines are handled correctly...
+     */
+    public function testHandleNewline() {
+    
+        $crlf = new Parser\Reader("BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n");
+        $cr = new Parser\Reader("BEGIN:VCALENDAR\rEND:VCALENDAR\r\n");
+        $lf = new Parser\Reader("BEGIN:VCALENDAR\nEND:VCALENDAR\r\n");
+        
+        $lexer = new Parser\Lexer($crlf);
+        $lexer->nextToken();
+        $lexer->nextToken();
+        $lexer->nextToken();
+        $lexer->nextToken();
+        $this->assertEqual($lexer->getToken(), "\r\n");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 0);
+        
+        /*
+        $lexer->getReader()->backUp();
+        $lexer->nextToken();
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 0);
+        */
     }
     
     public function testIsNewLine() {

@@ -62,6 +62,15 @@ ICALDATA;
     
     }
     
+    /**
+     * @todo The lexer uses this to back up to the last token. In many cases, it
+     * will fail because alpha tokens and newline tokens can be multiple characters
+     * and the current implementation of Reader::backUp() just backs up one
+     * character. I think the solution is to build a Lexer::backToken() method
+     * that uses Reader::backUp() to go back a character, but is smart enough to
+     * know when it needs to continue past the last char in search for the
+     * beginning of the token.
+     */
     public function testBackUp() {
     
         $this->assertEqual($this->reader->getChar(), 'B');
