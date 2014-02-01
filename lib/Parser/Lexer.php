@@ -64,12 +64,75 @@ class Lexer {
     
     /**
      * Determine if current character is an alpha character
+     */
     public function isAlpha($char) {
     
-        return preg_match("/[A-Za-z]/", $char);
+        return preg_match("/^[A-Za-z]+$/", $char);
     
     }
+    
+    /**
+     * Determine if current character is an alpha character
      */
+    public function isNumeric($char) {
+    
+        return preg_match("/^[0-9]+$/", $char);
+    
+    }
+    
+    /**
+     * Determine if current character is a colon character
+     */
+    public function isColon($char) {
+    
+        return ($char == ':');
+    
+    }
+    
+    /**
+     * Determine if current character is a semi-colon character
+     */
+    public function isSemiColon($char) {
+    
+        return ($char == ';');
+    
+    }
+    
+    /**
+     * Determine if current character is a quote character
+     */
+    public function isQuote($char) {
+    
+        return ($char == '"');
+    
+    }
+    
+    /**
+     * Determine if current character is an apostrophe character
+     */
+    public function isApostrophe($char) {
+    
+        return ($char == "'");
+    
+    }
+    
+    /**
+     * Determine if current character is a comma character
+     */
+    public function isComma($char) {
+    
+        return ($char == ",");
+    
+    }
+    
+    /**
+     * Determine if current character is whitespace characters
+     */
+    public function isWhitespace($char) {
+    
+        return preg_match('/^[ \t]+$/', $char);
+    
+    }
     
     /**
      * Fetch the next character
