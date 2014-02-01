@@ -46,7 +46,7 @@ ICALDATA;
         $this->assertTrue($reader->getChar());
         $this->assertTrue($reader->getChar());
         $this->assertTrue($reader->getChar());
-        $this->assertIdentical($reader->getChar(), false);
+        $this->assertFalse($reader->getChar());
     
     }
     
@@ -59,6 +59,20 @@ ICALDATA;
         $this->reader->getChar();
         $this->reader->getChar();
         $this->assertEqual($this->reader->getPos(), 4);
+    
+    }
+    
+    public function testBackUp() {
+    
+        $this->assertEqual($this->reader->getChar(), 'B');
+        $this->assertEqual($this->reader->getPos(), 1);
+        $this->assertEqual($this->reader->getChar(), 'E');
+        $this->assertEqual($this->reader->getPos(), 2);
+        $this->reader->backUp();
+        $this->assertEqual($this->reader->getChar(), 'E');
+        $this->assertEqual($this->reader->getPos(), 2);
+        $this->assertEqual($this->reader->getChar(), 'G');
+        $this->assertEqual($this->reader->getPos(), 3);
     
     }
 

@@ -12,7 +12,7 @@ namespace qCal\UnitTest;
 // @todo Remove this after autoloader is in place
 require_once 'simpletest/autorun.php';
 
-class TestCase extends \UnitTestCase {
+abstract class TestCase extends \UnitTestCase {
 
     public function setUp() {
     
