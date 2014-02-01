@@ -7,6 +7,7 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\UnitTest\Parser;
+use \qCal\Parser;
 
 class Lexer extends \qCal\UnitTest\TestCase {
 
@@ -29,7 +30,32 @@ SUMMARY:Bastille Day Party
 END:VEVENT
 END:VCALENDAR
 ICALDATA;
-        $this->lexer = new \qCal\Parser\Lexer($data);
+        $reader = new Parser\Reader($data);
+        $this->lexer = new Parser\Lexer($reader);
+    
+    }
+    
+    public function testGetLineNumber() {
+    
+        $this->assertEqual($this->lexer->getLineNo(), 1);
+    
+    }
+    
+    public function testGetCharNumber() {
+    
+        $this->assertEqual($this->lexer->getCharNo(), 0);
+    
+    }
+    
+    public function testNextToken() {
+    
+        $this->assertNull($this->lexer->getToken());
+        $this->assertTrue($this->lexer->nextToken());
+        $this->assertEqual($this->lexer->getToken(), "BEGIN");
+        $this->assertEqual($this->lexer->getLineNo(), 1);
+        $this->assertEqual($this->lexer->getCharNo(), 5);
+        // $this->assertTrue($this->lexer->nextToken());
+        // $this->assertEqual($this->lexer->getToken(), ":");
     
     }
     

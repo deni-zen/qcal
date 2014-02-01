@@ -27,7 +27,7 @@ class Lexer {
     const WHITESPACE = 10;
     const CHAR = 11;
     
-    protected $data;
+    protected $reader;
     
     protected $lineNo = 1;
     
@@ -46,11 +46,108 @@ class Lexer {
      * The second parameter will be a qCal\Parser\Context object. The context
      * object is where parsers store the results of parsing the data.
      */
-    public function __construct($data/*, Context $context*/) {
+    public function __construct(Reader $reader/*, Context $context*/) {
     
-        $this->data = $data;
+        $this->reader = $reader;
     
     }
+    
+    public function getLineNo() {
+    
+        return $this->lineNo;
+    
+    }
+    
+    public function getCharNo() {
+    
+        return $this->charNo;
+    
+    }
+    
+    public function getToken() {
+    
+        return $this->token;
+    
+    }
+    
+    protected function handleNewLine($char) {
+    
+        if ($char == "\r") {
+            $next = $this->reader->getChar();
+            if ($next == "\n") {
+                return "\r\n";
+            } else {
+                $this->reader->backUp();
+            }
+        }
+        return $char;
+    
+    }
+    
+    public function eatAlphaChars($char) {
+    
+        $val = $char;
+        while ($this->isAlpha($char=$this->reader->getChar())) {
+            $val .= $char;
+        }
+        return $val;
+    
+    }
+    
+    public function nextToken() {
+    
+        while (!is_bool($char = $this->reader->getChar())) {
+            if ($this->isNewLine($char)) {
+                // if newline, swallow CR LF, CR, or LF
+                // @todo RFC2445 requires CR LF
+                $this->token = $this->handleNewline($char);
+                $this->lineNo++;
+                $this->charNo = 0;
+                return $this->tokenType = self::NEWLINE;
+            } else if ($this->isAlpha($char)) {
+                $this->token = $this->eatAlphaChars($char);
+                $this->tokenType = self::ALPHA;
+            }
+            $this->charNo += strlen($this->getToken());
+            return $this->tokenType;
+        }
+        return false;
+    
+    }
+    
+    /**
+     * Fetch the next character
+    public function getChar() {
+    
+        if ($this->pos >= strlen($this->data)) {
+            return false;
+        }
+        $char = substr($this->data, $this->charNo, 1);
+        $this->charNo++;
+        return $char;
+    
+    }
+     */
+    
+    /**
+     * Move on to the next token in the data
+    public function nextToken() {
+    
+        $this->token = null;
+        while (!is_bool($char = $this->getChar())) {
+            if ($this->isNewLine()) {
+                $this->token = $char;
+                // Uncomment these once Reader object is in use
+                // $this->lineNo++;
+                // $this->charNo = 0;
+                return ($this->tokenType = self::NEWLINE);
+            } else if ($this->isAlpha()) {
+                
+            }
+        }
+    
+    }
+     */
     
     /**
      * Determine if current character is a newline character
@@ -133,40 +230,5 @@ class Lexer {
         return preg_match('/^[ \t]+$/', $char);
     
     }
-    
-    /**
-     * Fetch the next character
-    public function getChar() {
-    
-        if ($this->pos >= strlen($this->data)) {
-            return false;
-        }
-        $char = substr($this->data, $this->charNo, 1);
-        $this->charNo++;
-        return $char;
-    
-    }
-     */
-    
-    /**
-     * Move on to the next token in the data
-    public function nextToken() {
-    
-        $this->token = null;
-        while (!is_bool($char = $this->getChar())) {
-            if ($this->isNewLine()) {
-                $this->token = $char;
-                // Uncomment these once Reader object is in use
-                // $this->lineNo++;
-                // $this->charNo = 0;
-                return ($this->tokenType = self::NEWLINE);
-            } else if ($this->isAlpha()) {
-                
-            }
-        }
-    
-    }
-     */
-
 
 }
