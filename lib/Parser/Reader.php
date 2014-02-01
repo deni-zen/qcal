@@ -45,7 +45,7 @@ class Reader {
     
     public function backUp() {
     
-        $this->pos--;
+        return $this->pos--;
     
     }
 
