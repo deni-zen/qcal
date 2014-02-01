@@ -18,3 +18,12 @@ function pre($var, $exit=false) {
     return true;
 
 }
+
+/**
+ * Allows stuff like this with(new Object())->doStuff()
+ */
+function with($obj) {
+
+    return $obj;
+
+}
