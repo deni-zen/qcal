@@ -59,6 +59,9 @@ ICALDATA;
     
     }
     
+    /**
+     * Im not sure I like this test
+     */
     public function testNextToken() {
     
         $this->assertNull($this->lexer->getToken());
@@ -86,6 +89,116 @@ ICALDATA;
         $this->assertEqual($this->lexer->getLineNo(), 2);
         $this->assertEqual($this->lexer->getCharNo(), 0);
         $this->assertEqual($this->lexer->getTokenType(), Parser\Lexer::NEWLINE);
+    
+    }
+    
+    /**
+     * Let's try testing this bad boy again... @todo come back to this
+    public function testNextTokenRevisited() {
+    
+        // very simple icalendar data with all token types (at least it will have all of them eventually)
+        $data  = "BEGIN:VCALENDAR\t\r\n";
+        $data .= "VERSION:-2.0\r\n";
+        $data .= "PRODID:-//Apple Inc.//iCal 4.0.4//EN\r\n";
+        $data .= "CALSCALE:GREGORIAN\t\r\n";
+        $data .= "END:VCALENDAR\r\n";
+        $reader = new \qCal\Parser\Reader($data);
+        $lexer = new \qCal\Parser\Lexer($reader);
+        
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::ALPHA);
+        $this->assertEqual($lexer->getToken(), 'BEGIN');
+        
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::COLON);
+        $this->assertEqual($lexer->getToken(), ':');
+        
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::ALPHA);
+        $this->assertEqual($lexer->getToken(), 'VCALENDAR');
+        
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::WHITESPACE);
+        $this->assertEqual($lexer->getToken(), "\t");
+    
+    }
+     */
+    
+    public function testTokenTypes() {
+    
+        $reader = new \qCal\Parser\Reader("abc5645\r\n\t :'\"\n/\\;-");
+        $lexer = new \qCal\Parser\Lexer($reader);
+        
+        // test alpha
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::ALPHA);
+        $this->assertEqual($lexer->getToken(), 'abc');
+        $this->assertEqual($lexer->getLineNo(), 1);
+        $this->assertEqual($lexer->getCharNo(), 3);
+        
+        // test numeric
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::NUMERIC);
+        $this->assertEqual($lexer->getToken(), '5645');
+        $this->assertEqual($lexer->getLineNo(), 1);
+        $this->assertEqual($lexer->getCharNo(), 7);
+        
+        // test mewline
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::NEWLINE);
+        $this->assertEqual($lexer->getToken(), "\r\n");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 0);
+        
+        // test whitespace
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::WHITESPACE);
+        $this->assertEqual($lexer->getToken(), "\t");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 1);
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::WHITESPACE);
+        $this->assertEqual($lexer->getToken(), " ");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 2);
+        
+        // test colon
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::COLON);
+        $this->assertEqual($lexer->getToken(), ":");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 3);
+        
+        // test apostrophe
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::APOSTROPHE);
+        $this->assertEqual($lexer->getToken(), "'");
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 4);
+        
+        // test quote
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::QUOTE);
+        $this->assertEqual($lexer->getToken(), '"');
+        $this->assertEqual($lexer->getLineNo(), 2);
+        $this->assertEqual($lexer->getCharNo(), 5);
+        
+        // newline again
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::NEWLINE);
+        $this->assertEqual($lexer->getToken(), "\r\n");
+        $this->assertEqual($lexer->getLineNo(), 3);
+        $this->assertEqual($lexer->getCharNo(), 0);
+        
+        // test char(s)
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::CHAR);
+        $this->assertEqual($lexer->getToken(), '/');
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::CHAR);
+        $this->assertEqual($lexer->getToken(), "\\");
+        $this->assertEqual($lexer->getLineNo(), 3);
+        $this->assertEqual($lexer->getCharNo(), 2);
+        
+        // test semi-colon
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::SEMICOLON);
+        $this->assertEqual($lexer->getToken(), ';');
+        $this->assertEqual($lexer->getLineNo(), 3);
+        $this->assertEqual($lexer->getCharNo(), 3);
+        
+        // test dash
+        $this->assertEqual($lexer->nextToken(), \qCal\Parser\Lexer::DASH);
+        $this->assertEqual($lexer->getToken(), '-');
+        $this->assertEqual($lexer->getLineNo(), 3);
+        $this->assertEqual($lexer->getCharNo(), 4);
+        
+        // end of file... should return false now
+        $this->assertFalse($lexer->nextToken());
     
     }
     

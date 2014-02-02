@@ -222,6 +222,28 @@ class Lexer {
     }
     
     /**
+     * Read numeric character sequence
+     * Sequential numeric characters in the source data should be combined
+     * to make one token. So, when the lexer encounters a numeric character, it
+     * uses this method to "eat" the characters that follow until it encounters
+     * a non-numeric character, at which point it backs up one char and returns
+     * the sequence of numeric chars it "ate".
+     *
+     * @param string Numeric character that begins the numeric token
+     * @return string Numeric token
+     */
+    public function eatNumericChars($char) {
+    
+        $val = $char;
+        while ($this->isNumeric($char=$this->reader->getChar())) {
+            $val .= $char;
+        }
+        $this->reader->backUp();
+        return $val;
+    
+    }
+    
+    /**
      * Load next token
      * Using the qCal\Parser\Reader object passed in at instantiation, this
      * method steps through the source data, character by character, finding one
@@ -245,14 +267,36 @@ class Lexer {
                 $this->lineNo++;
                 $this->charNo = 0;
                 return $this->tokenType = self::NEWLINE;
+            } else if ($this->isWhiteSpace($char)) {
+                $this->token = $char;
+                $this->tokenType = self::WHITESPACE;
             } else if ($this->isAlpha($char)) {
                 $this->token = $this->eatAlphaChars($char);
                 $this->tokenType = self::ALPHA;
+            } else if ($this->isNumeric($char)) {
+                $this->token = $this->eatNumericChars($char);
+                $this->tokenType = self::NUMERIC;
             } else if ($this->isColon($char)) {
                 $this->token = $char;
                 $this->tokenType = self::COLON;
+            } else if ($this->isSemiColon($char)) {
+                $this->token = $char;
+                $this->tokenType = self::SEMICOLON;
+            } else if ($this->isQuote($char)) {
+                $this->token = $char;
+                $this->tokenType = self::QUOTE;
+            } else if ($this->isApostrophe($char)) {
+                $this->token = $char;
+                $this->tokenType = self::APOSTROPHE;
+            } else if ($this->isComma($char)) {
+                $this->token = $char;
+                $this->tokenType = self::COMMA;
+            } else if ($this->isDash($char)) {
+                $this->token = $char;
+                $this->tokenType = self::DASH;
             } else {
-                
+                $this->token = $char;
+                $this->tokenType = self::CHAR;
             }
             $this->charNo += strlen($this->getToken());
             return $this->tokenType;
@@ -344,6 +388,16 @@ class Lexer {
     protected function isComma($char) {
     
         return ($char == ",");
+    
+    }
+    
+    /**
+     * Test for dash
+     * @var string The single character that is to be tested
+     */
+    protected function isDash($char) {
+    
+        return ($char == "-");
     
     }
     
