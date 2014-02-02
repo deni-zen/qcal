@@ -271,7 +271,7 @@ class Lexer {
      * Test for newline character
      * @var string The single character that is to be tested
      */
-    public function isNewLine($char) {
+    protected function isNewLine($char) {
     
         return ($char == "\n" || $char == "\r");
     
@@ -281,7 +281,7 @@ class Lexer {
      * Test for alpha character
      * @var string The single character that is to be tested
      */
-    public function isAlpha($char) {
+    protected function isAlpha($char) {
     
         return preg_match("/^[a-z]$/i", $char);
     
@@ -291,7 +291,7 @@ class Lexer {
      * Test for numeric character
      * @var string The single character that is to be tested
      */
-    public function isNumeric($char) {
+    protected function isNumeric($char) {
     
         return preg_match("/^[0-9]$/", $char);
     
@@ -301,7 +301,7 @@ class Lexer {
      * Test for colon
      * @var string The single character that is to be tested
      */
-    public function isColon($char) {
+    protected function isColon($char) {
     
         return ($char == ':');
     
@@ -311,7 +311,7 @@ class Lexer {
      * Test for semi-colon
      * @var string The single character that is to be tested
      */
-    public function isSemiColon($char) {
+    protected function isSemiColon($char) {
     
         return ($char == ';');
     
@@ -321,7 +321,7 @@ class Lexer {
      * Test for quote
      * @var string The single character that is to be tested
      */
-    public function isQuote($char) {
+    protected function isQuote($char) {
     
         return ($char == '"');
     
@@ -331,7 +331,7 @@ class Lexer {
      * Test for apostrophe
      * @var string The single character that is to be tested
      */
-    public function isApostrophe($char) {
+    protected function isApostrophe($char) {
     
         return ($char == "'");
     
@@ -341,7 +341,7 @@ class Lexer {
      * Test for comma
      * @var string The single character that is to be tested
      */
-    public function isComma($char) {
+    protected function isComma($char) {
     
         return ($char == ",");
     
@@ -351,7 +351,7 @@ class Lexer {
      * Test for space or horizontal tab
      * @var string The single character that is to be tested
      */
-    public function isWhitespace($char) {
+    protected function isWhitespace($char) {
     
         return preg_match('/^[ \t]+$/', $char);
     

@@ -121,6 +121,10 @@ ICALDATA;
         */
     }
     
+    /**
+     * These have been commented out because all the methods they test are now
+     * protected methods. They have no business being exposed to the world.
+     * @todo Find another way to test them.
     public function testIsNewLine() {
     
         $this->assertFalse($this->lexer->isNewLine(" "));
@@ -205,5 +209,6 @@ ICALDATA;
         $this->assertTrue($this->lexer->isWhitespace(" \t    \t\t"));
     
     }
+    */
 
 }
