@@ -30,10 +30,12 @@ require_once 'simpletest/mock_objects.php';
 
 require_once '../lib/Parser/Reader.php';
 require_once '../lib/Parser/Lexer.php';
+require_once '../lib/Parser/LexerState.php';
 
 require_once 'unit/qCal/TestCase.php';
 require_once 'unit/qCal/Parser/Reader.php';
 require_once 'unit/qCal/Parser/Lexer.php';
+require_once 'unit/qCal/Parser/LexerState.php';
 
 /**
  * @todo Encapsulate test runner into its own little class
@@ -42,6 +44,7 @@ require_once 'unit/qCal/Parser/Lexer.php';
 $test = new GroupTest('qCal iCalendar Library Tests');
 $test->addTestCase(new qCal\UnitTest\Parser\Reader);
 $test->addTestCase(new qCal\UnitTest\Parser\Lexer);
+$test->addTestCase(new qCal\UnitTest\Parser\LexerState);
 
 if (TextReporter::inCli()) {
     exit ($test->run(new TextReporter()) ? 0 : 1);

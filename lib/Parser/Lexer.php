@@ -58,6 +58,31 @@ class Lexer {
     
     }
     
+    public function getState() {
+    
+        return new LexerState(
+            clone($this->getReader()),
+            $this->getLineNo(),
+            $this->getCharNo(),
+            $this->getToken(),
+            $this->getTokenType()
+        );
+    
+    }
+    
+    /**
+     * Revert to a previous state
+     */
+    public function revert(LexerState $state) {
+    
+        $this->reader = $state->getReader();
+        $this->lineNo = $state->getLineNo();
+        $this->charNo = $state->getCharNo();
+        $this->token = $state->getToken();
+        $this->tokenType = $state->getTokenType();
+    
+    }
+    
     public function getLineNo() {
     
         return $this->lineNo;
@@ -106,6 +131,17 @@ class Lexer {
     
     }
     
+    /**
+     * Load up the next token from the reader
+     *
+     * @todo I started writing a prevToken() method as well, but I found that it
+     * would basically be an exact duplicate of this method, only run backwards.
+     * Rather than deal with that mess, I'd like to implement a
+     * Parser\LexerState class which can be used to save the current state of
+     * the lexer at any given time and then revert it back to that state if
+     * needed. The lexer isn't meant to read an iCalendar file backwards and so
+     * there is no reason to implement a prevToken() method.
+     */
     public function nextToken() {
     
         while (!is_bool($char = $this->reader->getChar())) {
