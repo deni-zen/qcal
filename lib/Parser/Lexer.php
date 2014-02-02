@@ -1,8 +1,9 @@
 <?php
 /**
- * Lexigraphical Analyzer
- * This class breaks down iCalendar data into tokens which are then fed to the
- * parser for further processing.
+ * Parser Lexer
+ * The lexer uses a reader object to step through a source of iCalendar data,
+ * character by character, breaking it down into atomic pieces (tokens) which
+ * are then fed to the parser.
  *
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
@@ -13,38 +14,71 @@ namespace qCal\Parser;
 class Lexer {
 
     /**
-     * Token types
+     * Token type constants
      */
+    // Alphabetical sequence of characters
     const ALPHA = 1;
+    // Numeric sequence of characters
     const NUMERIC = 2;
+    // Single colon character
     const COLON = 3;
+    // Single semi-colon character
     const SEMICOLON = 4;
+    // Single quote character
     const QUOTE = 5;
+    // Single apostrophe character
     const APOSTROPHE = 6;
+    // Single comma character
     const COMMA = 7;
+    // Single dash character
     const DASH = 8;
+    // Carriage return, line break, or carriage return AND line break
     const NEWLINE = 9;
+    // Sequence of spaces or horizontal tabs
     const WHITESPACE = 10;
+    // Any other single character   q`-`1`iu
     const CHAR = 11;
     
+    /**
+     * @var qCal\Parser\Reader iCalendar data reader
+     */
     protected $reader;
     
+    /**
+     * @var integer Current line number 
+     */
     protected $lineNo = 1;
     
+    /**
+     * @var integer Current character number
+     */
     protected $charNo = 0;
     
+    /**
+     * @var string Current token value
+     */
     protected $token;
     
+    /**
+     * @var integer Current token type (see constants above)
+     */
     protected $tokenType = -1;
     
     /**
-     * @todo
-     * Eventually $string will be replaced by a qCal\Parser\Reader object which
-     * will allow different types of readers, but for now it is just a string
-     * containing iCalendar-formatted data.
+     * Class constructor
+     * Accepts a qCal\Parser\Reader object, which it uses to step through
+     * iCalendar data character by character.
      *
-     * The second parameter will be a qCal\Parser\Context object. The context
-     * object is where parsers store the results of parsing the data.
+     * @todo As of now, the qCal\Parser\Reader object works only with strings.
+     *       Once the lexer is fully written and tested, the reader will become
+     *       an abstract class and I will need to write concrete implementations
+     *       to read from more useful sources such as files. The majority of the
+     *       reader class, as it is now, will become qCal\Parser\Reader\String.
+     * @todo The lexer only breaks down iCalendar data into tokens. It doesn't
+     *       actually DO anything with them. In fact, they are discarded just as
+     *       soon as the next token is called into existence. In order to store
+     *       tokens for the parser, I'll need to implement a qCal\Parser\Context
+     *       class and pass an instance of it as the second argument here.
      */
     public function __construct(Reader $reader/*, Context $context*/) {
     
@@ -52,12 +86,22 @@ class Lexer {
     
     }
     
+    /**
+     * Get reader object
+     * 
+     * @return qCal\Parser\Reader The iCalendar data source object
+     */
     public function getReader() {
     
         return $this->reader;
     
     }
     
+    /**
+     * Generate a snapshot of this lexer instance's current state.
+     *
+     * @return qCal\Parser\LexerState A snapshot of the lexer's state
+     */
     public function getState() {
     
         return new LexerState(
@@ -72,6 +116,9 @@ class Lexer {
     
     /**
      * Revert to a previous state
+     *
+     * @param qCal\Parser\LexerState Contains state lexer should be reverted to
+     * @return qCal\Parser\Lexer Returns $this
      */
     public function revert(LexerState $state) {
     
@@ -80,27 +127,49 @@ class Lexer {
         $this->charNo = $state->getCharNo();
         $this->token = $state->getToken();
         $this->tokenType = $state->getTokenType();
+        return $this;
     
     }
     
+    /**
+     * Get line number currently being read from
+     *
+     * @return int Line number currently being read from=
+     */
     public function getLineNo() {
     
         return $this->lineNo;
     
     }
     
+    /**
+     * Get character number currently being read from
+     *
+     * @return int Character number currently being read from=
+     */
     public function getCharNo() {
     
         return $this->charNo;
     
     }
     
+    /**
+     * Get the type (see above constants) of the token that is currently loaded
+     * into the lexer
+     *
+     * @return int The token type that's currently loaded into the lexer
+     */
     public function getTokenType() {
     
         return $this->tokenType;
     
     }
     
+    /**
+     * Get the token that's currently loaded into the lexer
+     *
+     * @return string The token that's currently loaded into the lexer
+     */
     public function getToken() {
     
         return $this->token;
@@ -108,7 +177,17 @@ class Lexer {
     }
     
     /**
-     * @todo For now we are enforcing CR LF whether it's there or not
+     * Handle newline
+     * The iCalendar format expects/requires that lines be terminated by the
+     * internet standard newline (carriage return, line feed). Because of this,
+     * the lexer, when it encounters a carriage return, looks for a line feed to
+     * be immediately following that. Whether there is a carriage return, a line
+     * feed, or both, the lexer treats it as a single newline character.
+     * 
+     * @todo Make sure that this method properly handles CRLF, CR, and LF. As of
+     *       now I'm not entirely certain that it does.
+     * @param string Newline character
+     * @return string Proper internet standard newline
      */
     protected function handleNewLine($char) {
     
@@ -120,6 +199,17 @@ class Lexer {
     
     }
     
+    /**
+     * Read alphabetical character sequence
+     * Sequential alphabetical characters in the source data should be combined
+     * to make one token. So, when the lexer encounters an alpha character, it
+     * uses this method to "eat" the characters that follow until it encounters
+     * a non-alpha character, at which point it backs up one char and returns
+     * the sequence of alpha chars it "ate".
+     *
+     * @param string Alphabetical character that begins the alpha token
+     * @return string Alphabetical token
+     */
     public function eatAlphaChars($char) {
     
         $val = $char;
@@ -132,15 +222,18 @@ class Lexer {
     }
     
     /**
-     * Load up the next token from the reader
+     * Load next token
+     * Using the qCal\Parser\Reader object passed in at instantiation, this
+     * method steps through the source data, character by character, finding one
+     * token at a time. Every call to this method flushes any token currently in
+     * its memory and acquires the next token in the source. This method is
+     * basically the workhorse of this entire class.
      *
-     * @todo I started writing a prevToken() method as well, but I found that it
-     * would basically be an exact duplicate of this method, only run backwards.
-     * Rather than deal with that mess, I'd like to implement a
-     * Parser\LexerState class which can be used to save the current state of
-     * the lexer at any given time and then revert it back to that state if
-     * needed. The lexer isn't meant to read an iCalendar file backwards and so
-     * there is no reason to implement a prevToken() method.
+     * @note I had started writing a prevToken() method, but I decided against
+     * it. The lexer isn't meant to read source data backwards at any time, for
+     * any reason. I have, however, implemented a LexerState class, which can be
+     * used to save the current state of the lexer so that it may be reverted
+     * back to that state later on. See qCal\Parser\LexerState
      */
     public function nextToken() {
     
@@ -169,42 +262,14 @@ class Lexer {
     }
     
     /**
-     * Fetch the next character
-    public function getChar() {
-    
-        if ($this->pos >= strlen($this->data)) {
-            return false;
-        }
-        $char = substr($this->data, $this->charNo, 1);
-        $this->charNo++;
-        return $char;
-    
-    }
+     * @todo The following classes have no business being public. They were made
+     * public for the purpose of testing only. And that is no reason to make
+     * them public. Refactor these methods and find a better way to test them.
      */
     
     /**
-     * Move on to the next token in the data
-    public function nextToken() {
-    
-        $this->token = null;
-        while (!is_bool($char = $this->getChar())) {
-            if ($this->isNewLine()) {
-                $this->token = $char;
-                // Uncomment these once Reader object is in use
-                // $this->lineNo++;
-                // $this->charNo = 0;
-                return ($this->tokenType = self::NEWLINE);
-            } else if ($this->isAlpha()) {
-                
-            }
-        }
-    
-    }
-     */
-    
-    /**
-     * Determine if current character is a newline character
-     * @todo This shouldn't be public. find a new way to test it
+     * Test for newline character
+     * @var string The single character that is to be tested
      */
     public function isNewLine($char) {
     
@@ -213,25 +278,28 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is an alpha character
+     * Test for alpha character
+     * @var string The single character that is to be tested
      */
     public function isAlpha($char) {
     
-        return preg_match("/^[A-Za-z]+$/", $char);
+        return preg_match("/^[a-z]$/i", $char);
     
     }
     
     /**
-     * Determine if current character is an alpha character
+     * Test for numeric character
+     * @var string The single character that is to be tested
      */
     public function isNumeric($char) {
     
-        return preg_match("/^[0-9]+$/", $char);
+        return preg_match("/^[0-9]$/", $char);
     
     }
     
     /**
-     * Determine if current character is a colon character
+     * Test for colon
+     * @var string The single character that is to be tested
      */
     public function isColon($char) {
     
@@ -240,7 +308,8 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is a semi-colon character
+     * Test for semi-colon
+     * @var string The single character that is to be tested
      */
     public function isSemiColon($char) {
     
@@ -249,7 +318,8 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is a quote character
+     * Test for quote
+     * @var string The single character that is to be tested
      */
     public function isQuote($char) {
     
@@ -258,7 +328,8 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is an apostrophe character
+     * Test for apostrophe
+     * @var string The single character that is to be tested
      */
     public function isApostrophe($char) {
     
@@ -267,7 +338,8 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is a comma character
+     * Test for comma
+     * @var string The single character that is to be tested
      */
     public function isComma($char) {
     
@@ -276,7 +348,8 @@ class Lexer {
     }
     
     /**
-     * Determine if current character is whitespace characters
+     * Test for space or horizontal tab
+     * @var string The single character that is to be tested
      */
     public function isWhitespace($char) {
     

@@ -13,6 +13,10 @@ class Lexer extends \qCal\UnitTest\TestCase {
 
     protected $lexer;
     
+    /**
+     * Set up a reader and parser object with some very basic iCalendar data for
+     * testing against
+     */
     public function setUp() {
     
         parent::setUp();
@@ -131,11 +135,9 @@ ICALDATA;
     public function testIsAlpha() {
     
         $this->assertFalse($this->lexer->isAlpha(" "));
-        $this->assertFalse($this->lexer->isAlpha("abc123"));
+        $this->assertFalse($this->lexer->isAlpha("6"));
         $this->assertTrue($this->lexer->isAlpha("a"));
-        $this->assertTrue($this->lexer->isAlpha("aaaa"));
-        $this->assertTrue($this->lexer->isAlpha("aAAa"));
-        $this->assertTrue($this->lexer->isAlpha("A"));
+        $this->assertTrue($this->lexer->isAlpha("Z"));
     
     }
     
@@ -144,7 +146,7 @@ ICALDATA;
         $this->assertFalse($this->lexer->isNumeric(" "));
         $this->assertFalse($this->lexer->isNumeric("a"));
         $this->assertTrue($this->lexer->isNumeric("0"));
-        $this->assertTrue($this->lexer->isNumeric("5643"));
+        $this->assertTrue($this->lexer->isNumeric("6"));
     
     }
     
