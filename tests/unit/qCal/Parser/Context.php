@@ -18,8 +18,8 @@ class Context extends \qCal\UnitTest\TestCase {
     
         $data = 'foobar';
         $context = new \qCal\Parser\Context();
-        $context->pushResult($data);
-        $this->assertEqual($context->popResult(), $data);
+        $context->push($data);
+        $this->assertEqual($context->pop(), $data);
     
     }
 

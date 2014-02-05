@@ -19,14 +19,14 @@ class Context {
     
     }
     
-    public function pushResult($data) {
+    public function push($data) {
     
         array_push($this->stack, $data);
         return $this;
     
     }
     
-    public function popResult() {
+    public function pop() {
     
         return array_pop($this->stack);
     
