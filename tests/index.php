@@ -27,18 +27,21 @@ require_once 'simpletest/mock_objects.php';
 
 // Include library classes
 require_once '../lib/Parser/Reader.php';
+require_once '../lib/Parser/Context.php';
 require_once '../lib/Parser/Lexer.php';
 require_once '../lib/Parser/LexerState.php';
 
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
 require_once 'unit/qCal/Parser/Reader.php';
+require_once 'unit/qCal/Parser/Context.php';
 require_once 'unit/qCal/Parser/Lexer.php';
 require_once 'unit/qCal/Parser/LexerState.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
 $test->addTestCase(new qCal\UnitTest\Parser\Reader);
+$test->addTestCase(new qCal\UnitTest\Parser\Context);
 $test->addTestCase(new qCal\UnitTest\Parser\Lexer);
 $test->addTestCase(new qCal\UnitTest\Parser\LexerState);
 

@@ -13,12 +13,6 @@ class Context {
 
     protected $stack = array();
     
-    public function __construct() {
-    
-        
-    
-    }
-    
     public function push($data) {
     
         array_push($this->stack, $data);
@@ -29,6 +23,21 @@ class Context {
     public function pop() {
     
         return array_pop($this->stack);
+    
+    }
+    
+    public function count() {
+    
+        return count($this->stack);
+    
+    }
+    
+    public function peek() {
+    
+        if (empty($this->stack)) {
+            throw new \Exception('Empty context stack');
+        }
+        return $this->stack[$this->count() - 1];
     
     }
 
