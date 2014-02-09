@@ -202,12 +202,6 @@ ICALDATA;
     
     }
     
-    public function testHandleEndOfFile() {
-    
-        
-    
-    }
-    
     /**
      * @todo Test various newlines are handled correctly...
      */

@@ -85,5 +85,52 @@ ICALDATA;
         $this->assertEqual($this->reader->getPos(), 3);
     
     }
+    
+    /**
+     * @todo move these into their own unit test
+     */
+    public function testReadFromFile() {
+    
+        $reader = new \qCal\Parser\Reader\File('data/lukeschedule.ics');
+        $this->assertEqual($reader->getChar(), 'B');
+        $this->assertEqual($reader->getChar(), 'E');
+        $this->assertEqual($reader->getChar(), 'G');
+        $this->assertEqual($reader->getChar(), 'I');
+        $this->assertEqual($reader->getChar(), 'N');
+        $this->assertEqual($reader->getChar(), ':');
+        $this->assertEqual($reader->getChar(), 'V');
+        $this->assertEqual($reader->getChar(), 'C');
+        $this->assertEqual($reader->getChar(), 'A');
+        $this->assertEqual($reader->getChar(), 'L');
+        $this->assertEqual($reader->getChar(), 'E');
+        $this->assertEqual($reader->getChar(), 'N');
+        $this->assertEqual($reader->getChar(), 'D');
+        $this->assertEqual($reader->getChar(), 'A');
+        $this->assertEqual($reader->getChar(), 'R');
+        $this->assertEqual($reader->getChar(), "\r");
+        $this->assertEqual($reader->getChar(), "\n");
+        $this->assertEqual($reader->getChar(), "M");
+    
+    }
+    
+    public function testHandleNonExistentFile() {
+    
+        $filename = 'data/non-existent-file.ics';
+        $this->expectException(new \Exception('File does not exist: "' . $filename . '"'));
+        $reader = new \qCal\Parser\Reader\File($filename);
+    
+    }
+    
+    public function testFileReaderGetCharReturnsFalseAtEndOfFile() {
+    
+        $reader = new \qCal\Parser\Reader\File('data/bastille-day.ics');
+        $i = 0;
+        while(false !== ($char = $reader->getChar()) && $i < 2000) {
+            pre($char, false);
+            $i++;
+        }
+        pre($i);
+    
+    }
 
 }

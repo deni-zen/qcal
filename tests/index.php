@@ -27,6 +27,7 @@ require_once 'simpletest/mock_objects.php';
 
 // Include library classes
 require_once '../lib/Parser/Reader.php';
+require_once '../lib/Parser/Reader/File.php';
 require_once '../lib/Parser/Context.php';
 require_once '../lib/Parser/Lexer.php';
 require_once '../lib/Parser/LexerState.php';
