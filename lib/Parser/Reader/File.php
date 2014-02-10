@@ -37,6 +37,9 @@ class File extends \qCal\Parser\Reader {
             // @todo Handle this
             throw new \Exception('Could not read character at position, "' . $this->pos . '", in file, "' . $this->filename . '"');
         }
+        if (feof($this->fh)) {
+            return false;
+        }
         $this->pos++;
         return $char;
     }

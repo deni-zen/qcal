@@ -125,11 +125,12 @@ ICALDATA;
     
         $reader = new \qCal\Parser\Reader\File('data/bastille-day.ics');
         $i = 0;
-        while(false !== ($char = $reader->getChar()) && $i < 2000) {
-            pre($char, false);
+        while($i < 280) {
+            $reader->getChar();
             $i++;
         }
-        pre($i);
+        $char = $reader->getChar();
+        $this->assertTrue($char === false);
     
     }
 

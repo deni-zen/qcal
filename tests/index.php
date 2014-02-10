@@ -13,8 +13,9 @@
  *              sprints. Nobody wants to do TDD while having to wait several
  *              seconds or worse for every refresh.
  * @todo        Implement autoloader
+ * @todo        This code is using SimpleTest v1.01, Update to v1.10
  */
-error_reporting(E_ALL);
+error_reporting(E_ALL ^ (E_STRICT | E_DEPRECATED));
 ini_set('display_errors', 'On');
 
 // Include utility functions (mainly debugging tools and shortcuts)
