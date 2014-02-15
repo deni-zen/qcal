@@ -31,7 +31,7 @@ require_once '../lib/Parse/Reader.php';
 require_once '../lib/Parse/Reader/StringReader.php';
 require_once '../lib/Parse/Reader/FileReader.php';
 //require_once '../lib/Parser/Context.php';
-//require_once '../lib/Parser/Lexer.php';
+require_once '../lib/Parse/Lexer.php';
 //require_once '../lib/Parser/LexerState.php';
 //require_once '../lib/Parser/Parser.php';
 
@@ -39,7 +39,7 @@ require_once '../lib/Parse/Reader/FileReader.php';
 require_once 'unit/qCal/TestCase.php';
 require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 //require_once 'unit/qCal/Parser/Context.php';
-//require_once 'unit/qCal/Parser/Lexer.php';
+require_once 'unit/qCal/Parse/LexerUnitTest.php';
 //require_once 'unit/qCal/Parser/LexerState.php';
 //require_once 'unit/qCal/Parser/Parser.php';
 
@@ -47,7 +47,7 @@ require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 $test = new GroupTest('qCal iCalendar Library Tests');
 $test->addTestCase(new qCal\UnitTest\Parse\ReaderUnitTest);
 //$test->addTestCase(new qCal\UnitTest\Parser\Context);
-//$test->addTestCase(new qCal\UnitTest\Parser\Lexer);
+$test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 //$test->addTestCase(new qCal\UnitTest\Parser\LexerState);
 //$test->addTestCase(new qCal\UnitTest\Parser\ParserTests);
 
