@@ -19,5 +19,13 @@ class ParserTests extends \qCal\UnitTest\TestCase {
         parent::setUp();
     
     }
+    
+    public function testParserPlayground() {
+    
+        $reader = new Parser\Reader\File('/var/www/qcal/tests/data/bastille-day.ics');
+        $lexer = new Parser\Lexer($reader);
+        
+    
+    }
 
 }

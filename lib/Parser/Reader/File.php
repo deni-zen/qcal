@@ -1,7 +1,7 @@
 <?php
 /**
- * Parser
- * Abstract parser class 
+ * File Reader
+ * The lexer accepts data from several sources. This allows data from a local file.
  *
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
