@@ -47,11 +47,6 @@ class Lexer {
     protected $reader;
     
     /**
-     * @var qCal\Parser\Context Context stack
-     */
-    protected $context;
-    
-    /**
      * @var integer Current line number 
      */
     protected $lineNo = 1;
@@ -75,22 +70,10 @@ class Lexer {
      * Class constructor
      * Accepts a qCal\Parser\Reader object, which it uses to step through
      * iCalendar data character by character.
-     *
-     * @todo As of now, the qCal\Parser\Reader object works only with strings.
-     *       Once the lexer is fully written and tested, the reader will become
-     *       an abstract class and I will need to write concrete implementations
-     *       to read from more useful sources such as files. The majority of the
-     *       reader class, as it is now, will become qCal\Parser\Reader\String.
-     * @todo The lexer only breaks down iCalendar data into tokens. It doesn't
-     *       actually DO anything with them. In fact, they are discarded just as
-     *       soon as the next token is called into existence. In order to store
-     *       tokens for the parser, I'll need to implement a qCal\Parser\Context
-     *       class and pass an instance of it as the second argument here.
      */
-    public function __construct(Reader $reader/*, Context $context*/) {
+    public function __construct(Reader $reader) {
     
         $this->reader = $reader;
-        //$this->context = $context;
     
     }
     
@@ -106,26 +89,14 @@ class Lexer {
     }
     
     /**
-     * Get context object
-     *
-     * @return qCal\Parser\Context The context stack
-     */
-    public function getContext() {
-    
-        return $this->context;
-    
-    }
-    
-    /**
      * Generate a snapshot of this lexer instance's current state.
      *
      * @return qCal\Parser\LexerState A snapshot of the lexer's state
      */
     public function getState() {
     
-        return new qCal_LexerState(
+        return new LexerState(
             clone($this->getReader()),
-            clone($this->getContext()),
             $this->getLineNo(),
             $this->getCharNo(),
             $this->getToken(),
@@ -143,7 +114,6 @@ class Lexer {
     public function revert(LexerState $state) {
     
         $this->reader = $state->getReader();
-        $this->context = $state->getContext();
         $this->lineNo = $state->getLineNo();
         $this->charNo = $state->getCharNo();
         $this->token = $state->getToken();
