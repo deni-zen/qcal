@@ -36,12 +36,14 @@ require_once '../lib/Parse/LexerState.php';
 
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
+require_once 'unit/qCal/UtilityFunctionsUnitTest.php';
 require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 require_once 'unit/qCal/Parse/LexerUnitTest.php';
 require_once 'unit/qCal/Parse/LexerStateUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
+$test->addTestCase(new qCal\UnitTest\UtilityFunctionsUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\ReaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerStateUnitTest);
