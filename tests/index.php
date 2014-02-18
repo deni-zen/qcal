@@ -18,8 +18,15 @@
 error_reporting(E_ALL ^ (E_STRICT | E_DEPRECATED));
 ini_set('display_errors', 'On');
 
+set_include_path(
+    realpath(__DIR__ . '/../lib') . PATH_SEPARATOR .
+    __DIR__ . PATH_SEPARATOR .
+    get_include_path()
+);
+
 // Include utility functions (mainly debugging tools and shortcuts)
 // @todo Test utility functions
+require_once '../lib/autoload.php';
 require_once '../lib/utils/functions.php';
 
 // Include simpletest classes
@@ -27,26 +34,25 @@ require_once 'simpletest/unit_tester.php';
 require_once 'simpletest/reporter.php';
 require_once 'simpletest/mock_objects.php';
 
-// Include library classes
-require_once '../lib/Parse/Reader.php';
-require_once '../lib/Parse/Reader/StringReader.php';
-require_once '../lib/Parse/Reader/FileReader.php';
-require_once '../lib/Parse/Lexer.php';
-require_once '../lib/Parse/LexerState.php';
-
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
 require_once 'unit/qCal/UtilityFunctionsUnitTest.php';
+require_once 'unit/qCal/LoaderUnitTest.php';
 require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 require_once 'unit/qCal/Parse/LexerUnitTest.php';
 require_once 'unit/qCal/Parse/LexerStateUnitTest.php';
+require_once 'unit/qCal/DateTime/DateTimeUnitTest.php';
+require_once 'unit/qCal/Element/ComponentUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
+$test->addTestCase(new qCal\UnitTest\LoaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\UtilityFunctionsUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\ReaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerStateUnitTest);
+$test->addTestCase(new qCal\UnitTest\DateTime\DateTimeUnitTest);
+$test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
 
 // Determine which reporter to use and run tests
 if (TextReporter::inCli()) {
