@@ -44,6 +44,7 @@ require_once 'unit/qCal/Parse/LexerUnitTest.php';
 require_once 'unit/qCal/Parse/LexerStateUnitTest.php';
 require_once 'unit/qCal/DateTime/DateTimeUnitTest.php';
 require_once 'unit/qCal/DateTime/DurationUnitTest.php';
+require_once 'unit/qCal/DateTime/PeriodUnitTest.php';
 require_once 'unit/qCal/Element/ComponentUnitTest.php';
 
 // Build test cases
@@ -56,6 +57,7 @@ $test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerStateUnitTest);
 $test->addTestCase(new qCal\UnitTest\DateTime\DateTimeUnitTest);
 $test->addTestCase(new qCal\UnitTest\DateTime\DurationUnitTest);
+$test->addTestCase(new qCal\UnitTest\DateTime\PeriodUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
 
 // Determine which reporter to use and run tests
