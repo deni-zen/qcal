@@ -21,7 +21,7 @@ class Period {
                 throw new DurationException("Second argument of qCal\DateTime\Period::__construct() must be one of either qCal\DateTime\Period or qCal\DateTime\Duration");
             }
             $endTs = $start->getTimestamp() + $end->toSeconds();
-            $end = DateTime::createFromFormat('U', $endTs);
+            $end = new DateTime('@' . $endTs);
         }
         if ($start->getTimestamp() > $end->getTimestamp()) {
             throw new DurationException('Cannot create negative time period');
