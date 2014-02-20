@@ -7,7 +7,8 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\UnitTest\DateTime;
-use qCal\DateTime as DT;
+use \qCal\DateTime as DT,
+    \qCal\Exception\DateTime\PeriodException;
 
 class PeriodUnitTest extends \qCal\UnitTest\TestCase {
 
@@ -33,6 +34,15 @@ class PeriodUnitTest extends \qCal\UnitTest\TestCase {
         $p = new DT\Period($start, $end);
         $this->assertEqual($p->getDuration()->toICal(), 'P4W');
         $this->assertEqual($p->getDiffInSeconds(), 2419200);
+    
+    }
+    
+    public function testNegativePeriodThrowsException() {
+    
+        $start = new \qCal\DateTime('1986-04-23');
+        $end = new \qCal\DateTime('1986-03-23');
+        $this->expectException(new PeriodException('Cannot create negative time period'));
+        $period = new DT\Period($start, $end);
     
     }
 

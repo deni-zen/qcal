@@ -5,7 +5,7 @@
  */
 namespace qCal\Exception\DateTime;
 
-class DurationException extends Exception {
+class PeriodException extends Exception {
 
     
 
