@@ -14,6 +14,14 @@ namespace qCal;
  
 class DateTime extends \DateTime {
 
+    /**
+     * Return date/time as UTC
+     * @todo Make sure this is always right no matter the timezone
+     */
+    public function toUtc() {
     
+        return $this->format('Ymd\THis\Z');
+    
+    }
 
 }

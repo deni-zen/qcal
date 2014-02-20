@@ -34,6 +34,10 @@ class PeriodUnitTest extends \qCal\UnitTest\TestCase {
         $p = new DT\Period($start, $end);
         $this->assertEqual($p->getDuration()->toICal(), 'P4W');
         $this->assertEqual($p->getDiffInSeconds(), 2419200);
+        
+        $pd = new DT\Period($start, $end);
+        $pdv = new \qCal\Value\Period('19970101T180000Z/PT5H30M');
+        pre($pdv->toString());
     
     }
     

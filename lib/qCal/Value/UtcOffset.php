@@ -1,10 +1,10 @@
 <?php
 /**
- * Uri Value
+ * UTC Offset Value
  */
 namespace qCal\Value;
 
-class Uri extends \qCal\Value {
+class UtcOffset extends \qCal\Value {
 
     public function toString() {
     
@@ -14,7 +14,7 @@ class Uri extends \qCal\Value {
     
     protected function cast($value) {
     
-        // @todo Should this do any type of checking for URI format?
+        // @todo Implement this
         return $value;
     
     }

@@ -1,10 +1,10 @@
 <?php
 /**
- * DateTime base exception
+ * Value base exception
  * @todo Should this be abstract?
  */
 namespace qCal\Exception;
 
-class DateTime extends \qCal\Exception {
+class Value extends \qCal\Exception {
     
 }
