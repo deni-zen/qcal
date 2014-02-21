@@ -3,9 +3,9 @@
  * Time Value
  */
 namespace qCal\Value;
-use \qCal\DateTime;
+use \qCal\DateTime as DT;
 
-class Date extends \qCal\Value {
+class Time extends \qCal\Value {
 
     public function toString() {
     
@@ -17,7 +17,7 @@ class Date extends \qCal\Value {
     protected function cast($value) {
     
         // @todo return qCal\DateTime\Time object
-        return new DateTime($value);
+        return new DT($value);
     
     }
 

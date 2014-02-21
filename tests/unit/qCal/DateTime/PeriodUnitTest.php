@@ -37,7 +37,6 @@ class PeriodUnitTest extends \qCal\UnitTest\TestCase {
         
         $pd = new DT\Period($start, $end);
         $pdv = new \qCal\Value\Period('19970101T180000Z/PT5H30M');
-        pre($pdv->toString());
     
     }
     

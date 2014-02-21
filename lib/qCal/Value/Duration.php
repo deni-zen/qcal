@@ -9,7 +9,7 @@ class Duration extends \qCal\Value {
 
     public function toString() {
     
-        return $duration->toICal();
+        return $this->value->toICal();
     
     }
     

@@ -55,5 +55,11 @@ class Period {
         return $this->end;
     
     }
+    
+    public function toICal() {
+    
+        return sprintf('%s/%s', $this->start->toUtc(), $this->end->toUtc());
+    
+    }
 
 }
