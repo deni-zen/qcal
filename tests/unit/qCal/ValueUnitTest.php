@@ -7,9 +7,29 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\UnitTest;
-use qCal\Value;
+use \qCal\Value,
+    \qCal\Exception\Value\UnknownTypeException;
 
 class ValueUnitTest extends \qCal\UnitTest\TestCase {
+
+
+    public function testGenerate() {
+    
+        $value = Value::generate('text', 'Foo!');
+        $this->assertIsA($value, 'qCal\Value\Text');
+        $this->assertEqual($value->toString(), 'Foo!');
+        $value = Value::generate('tExt');
+        $this->assertEqual($value->toString(), '');
+    
+    }
+    
+    public function testGenerateThrowsExceptionForUnknownType() {
+    
+        $type = 'foo';
+        $this->expectException(new UnknownTypeException('Cannot generate value of unknown type, "' . $type . '"'));
+        $value = Value::generate($type, 'foo');
+    
+    }
 
     public function testTextValue() {
     
