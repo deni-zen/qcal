@@ -192,9 +192,28 @@ abstract class Component extends \qCal\Element {
      * Get this component's parent
      * @return qCal\Element\Component The parent component
      */
-    public function getParent(Component $component) {
+    public function getParent() {
     
         return $this->parent;
+    
+    }
+    
+    /**
+     * Get root component (core iCalendar object)
+     * @return qCal\Element\Component\VCalendar The root VCalendar component
+     * #todo   I don't know if I really like the name of this method
+     */
+    public function getCore() {
+    
+        if (!$parent = $this->getParent()) {
+            return $this;
+        }
+        while (true) {
+            $core = $parent;
+            if (!$parent = $parent->getParent()) {
+                return $core;
+            }
+        }
     
     }
     

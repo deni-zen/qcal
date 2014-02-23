@@ -137,7 +137,31 @@ class ComponentUnitTest extends \qCal\UnitTest\TestCase {
         $this->assertEqual($tz->getChildren('DAYlight'), array($daylight));
         
         // asking for a component type when there are no children of that type should return an empty array
-        $this->assertEqual($tz->getChildren('foo'), array());
+        $this->assertEqual($core->getChildren('VTODO'), array());
+    
+    }
+    
+    public function testGetParent() {
+    
+        $core = new Component\VCalendar();
+        $journal = new Component\VJournal();
+        $core->attach($journal);
+        $this->assertIdentical($journal->getParent(), $core);
+    
+    }
+    
+    public function testGetCoreComponent() {
+    
+        $core = new Component\VCalendar();
+        $tz = new Component\VTimeZone();
+        $daylight = new Component\DayLight();
+        $standard = new Component\Standard();
+        $tz->attach($daylight)
+           ->attach($standard);
+        $core->attach($tz);
+        $this->assertEqual($daylight->getCore(), $core);
+        $this->assertEqual($tz->getCore(), $core);
+        $this->assertEqual($core->getCore(), $core);
     
     }
 
