@@ -15,8 +15,14 @@
  * @todo        Implement autoloader
  * @todo        This code is using SimpleTest v1.01, Update to v1.10
  */
-error_reporting(E_ALL ^ (E_STRICT | E_DEPRECATED));
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 'On');
+
+// Set default timezone
+// @todo There should probably be a qCal::setDefaultTimezone() method or
+//       something that calls this function and also makes any other necessary
+//       settings changes
+date_default_timezone_set('UTC');
 
 set_include_path(
     realpath(__DIR__ . '/../lib') . PATH_SEPARATOR .
