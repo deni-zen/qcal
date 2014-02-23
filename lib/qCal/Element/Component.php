@@ -159,6 +159,25 @@ abstract class Component extends \qCal\Element {
     }
     
     /**
+     * Get the component's child components
+     * @param string The type of child components to return 
+     * @return array A list of this components child components
+     * @todo Maybe allow $type to be an array of types to return 
+     */
+    public function getChildren($type = null) {
+    
+        if (!is_null($type)) {
+            $type = strtoupper($type);
+            if (array_key_exists($type, $this->children)) {
+                return $this->children[$type];
+            }
+            return array();
+        }
+        return $this->children;
+    
+    }
+    
+    /**
      * Set this component's parent
      * @param qCal\Element\Component The parent component
      */
