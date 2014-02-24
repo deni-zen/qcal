@@ -61,6 +61,11 @@ abstract class Property extends \qCal\Element {
      */
     protected $params = array();
     
+    /**
+     * Class constructor
+     * @param string The property value
+     * @param array A list of property parameters
+     */
     public function __construct($value = null, $params = array()) {
     
         foreach ($params as $pname => $pval) {
@@ -70,12 +75,22 @@ abstract class Property extends \qCal\Element {
     
     }
     
+    /**
+     * Get the property name
+     * @return string The property name 
+     */
     public function getName() {
     
         return $this->name;
     
     }
     
+    /**
+     * Set a property param
+     * @param string Parameter name
+     * @param string Parameter value
+     * @return $this
+     */
     public function setParam($name, $value) {
     
         $name = strtoupper($name);
@@ -84,6 +99,11 @@ abstract class Property extends \qCal\Element {
     
     }
     
+    /**
+     * Get a param by name
+     * @param string The parameter name to retrieve
+     * @return string The parameter
+     */
     public function getParam($name) {
     
         $name = strtoupper($name);
@@ -95,12 +115,21 @@ abstract class Property extends \qCal\Element {
     
     }
     
+    /**
+     * Get all params
+     * @return array All property params
+     */
     public function getParams() {
     
         return $this->params;
     
     }
     
+    /**
+     * Set property value
+     * @param string The property value
+     * @return $this
+     */
     public function setValue($value) {
     
         if (is_null($value)) {
@@ -111,12 +140,20 @@ abstract class Property extends \qCal\Element {
     
     }
     
+    /**
+     * Get this property's value
+     * @return qCal\Value The property value
+     */
     public function getValue() {
     
         return $this->value;
     
     }
     
+    /**
+     * Get this property's type
+     * @return string Property type
+     */
     public function getType() {
     
         return $this->type;
