@@ -44,6 +44,22 @@ abstract class Value {
     }
     
     /**
+     * Generate a value object of a certain type
+     */
+    static public function generate($type, $value = null) {
+    
+        $type = strtolower(ucfirst($type));
+        $typeClass = 'qCal\\Value\\' . $type;
+        try {
+            Loader::loadClass($typeClass);
+        } catch (Exception\FileNotFound $e) {
+            throw new Exception\Value\UnknownTypeException('Cannot generate value of unknown type, "' . $type . '"');
+        }
+        return new $typeClass($value);
+    
+    }
+    
+    /**
      * Set raw value
      * @param mixed The value to be set
      * @return qCal\Value $this

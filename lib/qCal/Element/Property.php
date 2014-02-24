@@ -27,6 +27,7 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\Element;
+use \qCal\Value;
 
 abstract class Property extends \qCal\Element {
 
@@ -105,7 +106,7 @@ abstract class Property extends \qCal\Element {
         if (is_null($value)) {
             $value = $this->default;
         }
-        $this->value = $value;
+        $this->value = Value::generate($this->type, $value);
         return $this;
     
     }

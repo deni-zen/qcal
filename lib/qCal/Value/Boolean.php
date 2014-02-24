@@ -42,7 +42,9 @@ class Boolean extends \qCal\Value {
     
     protected function cast($value) {
     
-        return (boolean) $value;
+        if (strtolower($value) == 'true') return true;
+        elseif (strtolower($value) == 'false') return false;
+        else return (boolean) $value;
     
     }
 

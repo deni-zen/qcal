@@ -14,6 +14,11 @@
  *              seconds or worse for every refresh.
  * @todo        Implement autoloader
  * @todo        This code is using SimpleTest v1.01, Update to v1.10
+ * @todo        In a few cases, assertEqual() seems to be asserting equality
+ *              when its arguments aren't equal. It is doing basically a boolean
+ *              equality check. So that 1 == true, 'foo' == 'Object', etc. Find
+ *              out why and fix it.
+ *              
  */
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 'On');
@@ -52,6 +57,7 @@ require_once 'unit/qCal/DateTime/DateTimeUnitTest.php';
 require_once 'unit/qCal/DateTime/DurationUnitTest.php';
 require_once 'unit/qCal/DateTime/PeriodUnitTest.php';
 require_once 'unit/qCal/Element/ComponentUnitTest.php';
+require_once 'unit/qCal/Element/PropertyUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
@@ -65,6 +71,7 @@ $test->addTestCase(new qCal\UnitTest\DateTime\DateTimeUnitTest);
 $test->addTestCase(new qCal\UnitTest\DateTime\DurationUnitTest);
 $test->addTestCase(new qCal\UnitTest\DateTime\PeriodUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
+$test->addTestCase(new qCal\UnitTest\Element\PropertyUnitTest);
 
 // Determine which reporter to use and run tests
 if (TextReporter::inCli()) {
