@@ -21,10 +21,13 @@
  * as DtStart;TzID=US-Eastern:19980714T120000.
  * 
  * @package     qCal
- * @subpackage  qCal\Element\Component
+ * @subpackage  qCal\Element
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
+ * @todo        Some properties allow multiple values (delimited by commas). Add
+ *              a MultiProperty (name can be anything; MultiValueProperty,
+ *              Property\MultiValue, etc.)
  */
 namespace qCal\Element;
 use \qCal\Value;

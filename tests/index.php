@@ -58,6 +58,7 @@ require_once 'unit/qCal/DateTime/DurationUnitTest.php';
 require_once 'unit/qCal/DateTime/PeriodUnitTest.php';
 require_once 'unit/qCal/Element/ComponentUnitTest.php';
 require_once 'unit/qCal/Element/PropertyUnitTest.php';
+require_once 'unit/qCal/Element/ParameterUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
@@ -72,6 +73,7 @@ $test->addTestCase(new qCal\UnitTest\DateTime\DurationUnitTest);
 $test->addTestCase(new qCal\UnitTest\DateTime\PeriodUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\PropertyUnitTest);
+$test->addTestCase(new qCal\UnitTest\Element\ParameterUnitTest);
 
 // Determine which reporter to use and run tests
 if (TextReporter::inCli()) {
