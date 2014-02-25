@@ -181,6 +181,6 @@ abstract class Property extends \qCal\Element {
      * @return boolean True if property conforms to RFC5545
      * @throws qCal\Exception\Conformance\Exception if conformance error 
      */
-    abstract protected function doConform();
+    // abstract protected function doConform();
 
 }
