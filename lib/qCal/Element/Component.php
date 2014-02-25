@@ -91,12 +91,6 @@ abstract class Component extends \qCal\Element {
     protected $name;
     
     /**
-     * Contains a list of allowed parent components.
-     * @var array Allowed parent components
-     */
-    // protected $allowedParents = array();
-    
-    /**
      * Contains this components children components
      * @var array List of children components
      */
@@ -113,24 +107,6 @@ abstract class Component extends \qCal\Element {
      * @var qCal\Element\Component A reference to the parent component (if any)
      */
     protected $parent;
-    
-    /**
-     * Required properties
-     * @var array A list of required properties
-     * @todo Required properties can actually change depending on whether other
-     *       properties are specified and what they are specified as. Because of
-     *       this, I think that this method of stating required properties isn't
-     *       the best way to go. Look at the OOP book and see if you can figure
-     *       out a better way to specify this type of rule.
-     */
-    // protected $requiredProperties = array();
-    
-    /**
-     * Certain properties are allowed on certain components. This contains a
-     * list of properties allowed on this component.
-     * @var array List of allowed properties
-     */
-    // protected $allowedProperties = array();
     
     /**
      * Class constructor
@@ -174,46 +150,6 @@ abstract class Component extends \qCal\Element {
             return array();
         }
         return $this->children;
-    
-    }
-    
-    /**
-     * Set this component's parent
-     * @param qCal\Element\Component The parent component
-     */
-    public function setParent(Component $component) {
-    
-        $this->parent = $component;
-        return $this;
-    
-    }
-    
-    /**
-     * Get this component's parent
-     * @return qCal\Element\Component The parent component
-     */
-    public function getParent() {
-    
-        return $this->parent;
-    
-    }
-    
-    /**
-     * Get root component (core iCalendar object)
-     * @return qCal\Element\Component\VCalendar The root VCalendar component
-     * #todo   I don't know if I really like the name of this method
-     */
-    public function getCore() {
-    
-        if (!$parent = $this->getParent()) {
-            return $this;
-        }
-        while (true) {
-            $core = $parent;
-            if (!$parent = $parent->getParent()) {
-                return $core;
-            }
-        }
     
     }
     

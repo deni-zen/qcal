@@ -162,5 +162,25 @@ abstract class Property extends \qCal\Element {
         return $this->type;
     
     }
+    
+    /**
+     * Run conformance tests on this property
+     * @return boolean True if property conforms to RFC5545
+     * @throws qCal\Exception\Conformance\Exception if conformance error 
+     */
+    public function conform() {
+    
+        return $this->doConform();
+    
+    }
+    
+    /**
+     * Conformance definition method
+     * Each concrete implementation of this abstract class must implement its
+     * own doConform() method, throwing a conformance exception on error.
+     * @return boolean True if property conforms to RFC5545
+     * @throws qCal\Exception\Conformance\Exception if conformance error 
+     */
+    abstract protected function doConform();
 
 }
