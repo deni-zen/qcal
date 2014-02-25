@@ -172,6 +172,7 @@ abstract class Component extends \qCal\Element {
      */
     public function addProperty(Property $property) {
     
+        $property->setParent($this);
         $this->properties[$property->getName()][] = $property;
         return $this;
     

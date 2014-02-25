@@ -41,6 +41,7 @@ require_once '../lib/autoload.php';
 require_once '../lib/utils/functions.php';
 
 // Include simpletest classes
+// @todo I should be using mock objects but I'm not because I'm lazy and sloppy
 require_once 'simpletest/unit_tester.php';
 require_once 'simpletest/reporter.php';
 require_once 'simpletest/mock_objects.php';
