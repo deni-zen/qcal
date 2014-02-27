@@ -81,6 +81,7 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\Element;
+use \qCal\Exception\Element\Property\UndefinedException;
 
 abstract class Component extends \qCal\Element {
 
@@ -154,9 +155,28 @@ abstract class Component extends \qCal\Element {
     }
     
     /**
+     * Get component's children without sorting into type
+     * Sometimes it is necessary to just get a list of all child components in
+     * one big array in order to loop through them and perform tasks. In those
+     * cases, call this method instead of getChildren().
+     * @return array All children in an array
+     * @todo test this
+     */
+    public function getAllChildren() {
+    
+        $ret = array();
+        foreach ($this->children as $type => $children) {
+            $ret = array_merge($ret, $children);
+        }
+        return $ret;
+    
+    }
+    
+    /**
      * Attach a sub-component to this component as its child.
      * @param qCal\Element\Component A sub-component to be attached
      * @return qCal\Element\Component $this for chaining method calls
+     * @todo I don't think I like the name "attach" for this method. Change it.
      */
     public function attach(Component $component) {
     
@@ -175,6 +195,78 @@ abstract class Component extends \qCal\Element {
         $property->setParent($this);
         $this->properties[$property->getName()][] = $property;
         return $this;
+    
+    }
+    
+    /**
+     * Get all properties by type
+     * @return array A multi-dimensional array of properties, where keys are the
+     *               property names and values are an array of that type of prop
+     * @todo Test this
+     */
+    public function getProperties($type = null) {
+    
+        if (!is_null($type)) {
+            $type = strtoupper($type);
+            if (array_key_exists($type, $this->properties)) {
+                return $this->properties[$type];
+            }
+            return array();
+        }
+        return $this->properties;
+    
+    }
+    
+    /**
+     * Check if this component has a certain property defined
+     * @param string The name of the property to test for
+     * @todo Test this
+     */
+    public function hasProperty($name) {
+    
+        $props = $this->getProperties($name);
+        return !empty($props);
+    
+    }
+    
+    /**
+     * Get single property by name
+     * Sometimes it is useful to be able to get a property by name. The problem
+     * though, is that sometimes properties are set multiple times in a
+     * component. Because of this, this method has to return an iterator. That
+     * way, even if there are multiple properties returned, the return value
+     * doesn't have to be an array.
+     * @param string The name of the property to retrieve
+     * @return Element\Property The retrieved property
+     * @throws qCal\Exception\Element\Property\UndefinedException
+     * @todo Some properties can be set multiple times. In those cases, this
+     *       will only return the first property. Find a solution for this.
+     * @todo Maybe if the property is set multiple times, throw an exception
+     *       telling them they need to use getProperties()?
+     * @todo Test this
+     */
+    public function getProperty($name) {
+    
+        if ($this->hasProperty($name)) {
+            $props = $this->getProperties($name);
+            return $props[0];
+        }
+        throw new UndefinedException($name . ' property is not defined.');
+    
+    }
+    
+    /**
+     * Get all properties
+     * @return array A list of all properties, not sorted by type
+     * @todo Test this
+     */
+    public function getAllProperties() {
+    
+        $ret = array();
+        foreach ($this->properties as $type => $properties) {
+            $ret = array_merge($ret, $properties);
+        }
+        return $ret;
     
     }
 

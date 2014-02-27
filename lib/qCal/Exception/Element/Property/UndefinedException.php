@@ -1,21 +1,15 @@
 <?php
 /**
- * Required Conformance Rule
+ * Undefined Property Exception
  *
  * @package     qCal
- * @subpackage  qCal\Conformance
+ * @subpackage  qCal\Exception
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
-namespace qCal\Rule;
+namespace qCal\Exception\Element\Property;
 
-class Required extends \qCal\Rule {
-
-    public function __construct() {
+class UndefinedException extends Exception {
     
-        
-    
-    }
-
 }

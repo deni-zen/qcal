@@ -48,6 +48,7 @@ require_once 'simpletest/mock_objects.php';
 
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
+require_once 'unit/QCalUnitTest.php';
 require_once 'unit/qCal/UtilityFunctionsUnitTest.php';
 require_once 'unit/qCal/LoaderUnitTest.php';
 require_once 'unit/qCal/ValueUnitTest.php';
@@ -77,6 +78,7 @@ $test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\PropertyUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ParameterUnitTest);
 $test->addTestCase(new qCal\UnitTest\Conformance\ConformanceUnitTest);
+$test->addTestCase(new qCal\UnitTest\QCalUnitTest);
 
 // Determine which reporter to use and run tests
 if (TextReporter::inCli()) {

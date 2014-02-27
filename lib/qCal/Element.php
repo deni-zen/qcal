@@ -7,9 +7,17 @@
  * abstract class.
  */
 namespace qCal;
+use \qCal\Element,
+    \qCal\Conformance\Visitor;
 
 abstract class Element {
 
+    /**
+     * qCal wrapper object
+     * @var qCal The wrapper object 
+     */
+    protected $qCal;
+    
     /**
      * Parent Component
      * @var qCal\Element\Component A reference to the parent component (if any)
@@ -51,6 +59,45 @@ abstract class Element {
             $core = $parent;
             if (!$parent = $parent->getParent()) {
                 return $core;
+            }
+        }
+    
+    }
+    
+    /**
+     * Get qCal wrapper object
+     * @return qCal The qCal wrapper object
+     * @todo Test this
+     * @todo Make Element set this value
+     */
+    public function getQCal() {
+    
+        return $this->qCal;
+    
+    }
+    
+    /**
+     * Accept  conformance visitor
+     * @param  qCal\Conformance\Visitor The visitor which applies conformance
+     *         rules to each element in the tree
+     * @return $this
+     * @todo   This feels a little sloppy. I don't particularly like the
+     *         conditionals. It's fine for now, but maybe refactor later.
+     */
+    public function accept(Visitor $visitor) {
+    
+        $visitor->visit($this);
+        if ($this instanceof Element\Component) {
+            foreach ($this->getAllChildren() as $child) {
+                $child->accept($visitor);
+            }
+            foreach ($this->getAllProperties() as $prop) {
+                $prop->accept($visitor);
+            }
+        }
+        if ($this instanceof Element\Property) {
+            foreach ($this->getParams() as $param) {
+                $param->accept($visitor);
             }
         }
     

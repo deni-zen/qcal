@@ -2,6 +2,9 @@
 /**
  * DateTime Duration Class
  * Duration is stored internally as an amount of seconds
+ * @todo This needs to support negative durations for Trigger property. The
+ *       trigger property has an example duration of "-P15M" and it didn't work.
+ *       Add a unit test for that value and make it work.
  */
 namespace qCal\DateTime;
 use \qCal\Exception\DateTime\DurationException;

@@ -1,19 +1,15 @@
 <?php
 /**
- * Class Property
- * 
+ * Base Property Exception
+ *
+ * @package     qCal
+ * @subpackage  qCal\Exception
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
-namespace qCal\Element\Property;
+namespace qCal\Exception\Element\Property;
 
-class Class extends \qCal\Element\Property {
-
-    protected $name = "CLASS";
+class Exception extends \qCal\Exception\Element\Exception {
     
-    protected $type = "TEXT";
-
-    protected $default = "PUBLIC";
-
 }
