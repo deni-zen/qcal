@@ -164,5 +164,27 @@ class ComponentUnitTest extends \qCal\UnitTest\TestCase {
         $this->assertEqual($core->getCore(), $core);
     
     }
+    
+    /**
+     * Add property should not overwrite existing property
+     */
+    public function testAddProperty() {
+    
+        $cmpnt = new Component\VCalendar();
+        $prop1 = new Property\Version(1);
+        $prop2 = new Property\Version(2);
+        $cmpnt->addProperty($prop1);
+        $this->assertEqual($cmpnt->getProperty('VERSION'), $prop1);
+    
+    }
+    
+    /**
+     * Set property should not overwrite existing property
+     */
+    public function testSetProperty() {
+    
+        
+    
+    }
 
 }

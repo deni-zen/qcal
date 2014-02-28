@@ -231,13 +231,26 @@ abstract class Component extends \qCal\Element {
     }
     
     /**
-     * Add a new property to this component
+     * Add a property
+     * If property already exists, this method will add another without
+     * overwriting the existing property
      * @param qCal\Element\Property The property to be added
      */
     public function addProperty(Property $property) {
     
         $this->properties[$property->getName()][] = $property;
         return $this;
+    
+    }
+    
+    /**
+     * Set a property
+     * If property already exists, this method will overwrite the existing
+     * property with the new value.
+     */
+    public function setProperty(Property $property) {
+    
+        $this->properties[$property->getName()][] = $property;
     
     }
 

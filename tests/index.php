@@ -47,9 +47,12 @@ require_once 'simpletest/mock_objects.php';
 
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
+<<<<<<< HEAD
 require_once 'unit/qCal/UtilityFunctionsUnitTest.php';
 require_once 'unit/qCal/LoaderUnitTest.php';
 require_once 'unit/qCal/ValueUnitTest.php';
+=======
+>>>>>>> parent of 33a101a... Added unit tests for utility functions
 require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 require_once 'unit/qCal/Parse/LexerUnitTest.php';
 require_once 'unit/qCal/Parse/LexerStateUnitTest.php';
@@ -62,9 +65,12 @@ require_once 'unit/qCal/Element/ParameterUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
+<<<<<<< HEAD
 $test->addTestCase(new qCal\UnitTest\LoaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\ValueUnitTest);
 $test->addTestCase(new qCal\UnitTest\UtilityFunctionsUnitTest);
+=======
+>>>>>>> parent of 33a101a... Added unit tests for utility functions
 $test->addTestCase(new qCal\UnitTest\Parse\ReaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerStateUnitTest);
