@@ -154,6 +154,15 @@ abstract class Property extends \qCal\Element {
     }
     
     /**
+     * Get this property's value as a string
+     */
+    public function __toString() {
+    
+        return $this->value->__toString();
+    
+    }
+    
+    /**
      * Get this property's type
      * @return string Property type
      */

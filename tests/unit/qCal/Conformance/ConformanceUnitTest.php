@@ -1,9 +1,12 @@
 <?php
 /**
  * Conformance Unit Tests
+ * 
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
+ * @todo        Seperate this into component, property and parameter conformance
+ *              unit tests.
  */
 namespace qCal\UnitTest\Conformance;
 use \qCal\Conformance as Conf,
@@ -12,6 +15,10 @@ use \qCal\Conformance as Conf,
 
 class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
 
+    /**
+     * Property Conformance Tests
+     */
+    
     public function testVisitorDoesntThrowException() {
     
         $cal = new Element\Component\VCalendar();
@@ -19,6 +26,8 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
         $tz = new Element\Component\VTimeZone();
         $action = new Element\Property\Action('AUDIO');
         $alarm->addProperty($action);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         // $alarm->addProperty(clone $action);
         $attach = new Element\Property\Attach('http://www.example.com/some/attachment.exe');
         // $tz->addProperty($attach);
@@ -35,16 +44,20 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
     
         // No exception thrown here means test passes
         $alarm = new Element\Component\VAlarm();
-        $action = new Element\Property\Action();
+        $action = new Element\Property\Action('AUDIO');
         $alarm->addProperty($action);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         $visitor = new Conf\Visitor();
         $alarm->accept($visitor);
         
         // Exception should be thrown for this
         $this->expectException(new ConformanceException('ACTION property cannot be defined for VJOURNAL component.'));
         $journal = new Element\Component\VJournal();
-        $action = new Element\Property\Action();
+        $action = new Element\Property\Action('AUDIO');
         $journal->addProperty($action);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         $visitor = new Conf\Visitor();
         $journal->accept($visitor);
     
@@ -54,8 +67,12 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
     
         // No exception thrown here means test passes
         $alarm = new Element\Component\VAlarm();
+        $action = new Element\Property\Action('AUDIO');
         $attach = new Element\Property\Attach();
         $alarm->addProperty($attach);
+        $alarm->addProperty($action);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         $visitor = new Conf\Visitor();
         $alarm->accept($visitor);
         
@@ -64,6 +81,8 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
         $timezone = new Element\Component\VTimeZone();
         $attach = new Element\Property\Attach();
         $timezone->addProperty($attach);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         $visitor = new Conf\Visitor();
         $timezone->accept($visitor);
     
@@ -77,8 +96,12 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
     
         // No exception thrown here means test passes
         $alarm = new Element\Component\VAlarm();
+        $action = new Element\Property\Action('AUDIO');
         $attendee = new Element\Property\Attendee();
         $alarm->addProperty($attendee);
+        $alarm->addProperty($action);
+        $trigger = new Element\Property\Trigger('PT15M');
+        $alarm->addProperty($trigger);
         $visitor = new Conf\Visitor();
         $alarm->accept($visitor);
         
@@ -999,6 +1022,19 @@ class ConformanceUnitTest extends \qCal\UnitTest\TestCase {
         $todo->addProperty($version);
         $visitor = new Conf\Visitor();
         $todo->accept($visitor);
+    
+    }
+    
+    /**
+     * Component Conformance Tests
+     */
+    
+    public function testAlarmComponentConformance() {
+    
+        $this->expectException(new ConformanceException('VALARM missing required properties: ACTION, TRIGGER'));
+        $alarm = new Element\Component\VAlarm();
+        $visitor = new Conf\Visitor();
+        $alarm->accept($visitor);
     
     }
 
