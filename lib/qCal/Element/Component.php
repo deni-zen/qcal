@@ -116,10 +116,16 @@ abstract class Component extends \qCal\Element {
      */
     public function __construct($properties = array(), $components = array()) {
     
-        foreach ($components as $c) {
+        foreach ($components as $name => $val) {
+            if (!($val instanceof Component)) {
+                
+            }
             $this->attach($c);
         }
-        foreach($properties as $p) {
+        foreach($properties as $name => $val) {
+            if (!($val instanceof Property)) {
+                // $prop = Element\Property::generate($name, $val);
+            }
             $this->addProperty($p);
         }
     
