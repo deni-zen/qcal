@@ -39,19 +39,22 @@ class Duration {
     public function durationStringToArray($duration) {
     
         // match duration string elements
-        if (!preg_match('/^P([0-9]+[W])?([0-9]+[D])?T?([0-9]+[H])?([0-9]+[M])?([0-9]+[S])?$/i', $duration, $matches)) {
+        if (!preg_match('/^([+-])?P([0-9]+[W])?([0-9]+[D])?T?([0-9]+[H])?([0-9]+[M])?([0-9]+[S])?$/i', $duration, $matches)) {
             throw new DurationException("Invalid input string: \"$duration\"");
         }
+        $ret = array();
         // remove first element (which is just entire the matched string)
         array_shift($matches);
-        $ret = array();
+        // remove plus/minus symbol
+        // $ret['sign'] = array_shift($matches);
+        $sign = array_shift($matches);
         foreach ($matches as $elem) {
             $elem = strtoupper($elem);
             preg_match('/^([0-9]+)([WDHMS]+)$/', $elem, $match);
             if (empty($match)) continue;
             $amnt = $match[1];
             $type = $match[2];
-            $ret[$type] = $amnt;
+            $ret[$type] = (int) ($sign . $amnt);
         }
         return $ret;
     
@@ -63,6 +66,7 @@ class Duration {
      * @param boolean $rollover Set to true to allow values to "rollover"
      * @return $this
      * @access protected
+     * @todo This needs to support what is says in the description
      */
     protected function setDuration($duration) {
     
@@ -71,20 +75,26 @@ class Duration {
             throw new DurationException("You need to provide an array with the right keys.");
             // $duration = array($duration);
         }*/
+        /*pr($duration);
+        if (array_key_exists('sign', $duration)) {
+            $sign = $duration['sign'];
+            unset($duration['sign']);
+        }*/
+        //pre($duration);
         $diff = array_diff_key($duration, self::$conversions);
         if (!empty($diff)) {
             throw new DurationException("Invalid input array");
         }
         $totalSeconds = 0;
-        $posneg = "+";
+        // $posneg = "+";
         foreach (self::$conversions as $intvl => $seconds) {
             if (array_key_exists($intvl, $duration)) {
                 $amnt = $duration[$intvl];
                 $totalSeconds += self::$conversions[$intvl] * $amnt;
             }
         }
-        $interval = (integer) ($posneg . $totalSeconds);
-        $this->duration = $interval;
+        // $interval = (integer) ($posneg . $totalSeconds);
+        $this->duration = $totalSeconds;
         return $this;
     
     }
