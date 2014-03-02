@@ -31,7 +31,7 @@
  */
 namespace qCal\Element;
 use \qCal\Value,
-    \qCal\Loader;
+    \qCal\Element\Parameter;
 
 abstract class Property extends \qCal\Element {
 
@@ -128,6 +128,11 @@ abstract class Property extends \qCal\Element {
     public function __construct($value = null, $params = array()) {
     
         foreach ($params as $pname => $pval) {
+            if (!($pval instanceof Parameter)) {
+                $pval = Parameter::generate($pname, $pval);
+            } else {
+                $pname = $pval->getName();
+            }
             $this->setParam($pname, $pval);
         }
         $this->setValue($value);
@@ -143,7 +148,7 @@ abstract class Property extends \qCal\Element {
     
         try {
             $className = 'qCal\\Element\\Property\\' . self::$propertyMap[$name];
-            Loader::loadClass($className);
+            \qCal\Loader::loadClass($className);
             return new $className($value);
         } catch (FileNotFound $e) {
             // @todo is this the right exception?
@@ -199,6 +204,15 @@ abstract class Property extends \qCal\Element {
     public function getParams() {
     
         return $this->params;
+    
+    }
+    
+    /**
+     * Check if property has paramaters
+     */
+    public function hasParams() {
+    
+        return !empty($this->params);
     
     }
     

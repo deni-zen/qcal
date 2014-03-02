@@ -153,7 +153,7 @@ abstract class Component extends \qCal\Element {
     
         try {
             $className = 'qCal\\Element\\Component\\' . self::$componentMap[$name];
-            Loader::loadClass($className);
+            \qCal\Loader::loadClass($className);
             return new $className($value);
         } catch (FileNotFound $e) {
             // @todo is this the right exception?

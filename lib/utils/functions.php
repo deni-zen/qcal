@@ -39,17 +39,16 @@ function pr($var, $return = false) {
 /**
  * Debugging function - Dumps component in a human-readable way
  */
-function pcom($com, $depth = 0) {
+function pcom($com) {
 
-    $depth++;
     echo '<div style="font-family: lucida grande; margin: 10px; padding: 10px 25px; border: 1px solid #999; background-color: #bbb">';
     if ($com instanceof \qCal\Element\Component) {
-        echo pad('<strong style="text-decoration: underline;">' . $com->getName() . '</strong>', $depth) . "<br>";
+        echo '<strong style="text-decoration: underline;">' . $com->getName() . '</strong>' . "<br>";
         foreach ($com->getAllProperties() as $prop) {
-            pprop($prop, $depth);
+            pprop($prop);
         }
         foreach ($com->getAllChildren() as $child) {
-            pcom($child, $depth);
+            pcom($child);
         }
     } else {
         echo 'Not A Component';
@@ -59,11 +58,27 @@ function pcom($com, $depth = 0) {
 
 }
 
-function pprop($prop, $depth = 0) {
+function pprop($prop) {
 
     if ($prop instanceof \qCal\Element\Property) {
-        echo pad('<strong>' . $prop->getName() . "</strong>: " . $prop->getValue() . "<br>", $depth);
+        $print = '<strong>' . $prop->getName() . "</strong>";
+        if ($prop->hasParams()) {
+            // $params = array();
+            foreach ($prop->getParams() as $key => $param) {
+                // $params[] = $key . '=' . $param;
+                $print .= ';' . $key . '=' . $param->getValue();
+            }
+            // $print .= implode(';', $params)
+        }
+        $print .= ": " . $prop->getValue() . "<br>";
     }
+    print $print;
+
+}
+
+function ppar($param) {
+
+    
 
 }
 
