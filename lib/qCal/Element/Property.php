@@ -243,6 +243,7 @@ abstract class Property extends \qCal\Element {
     
     /**
      * Get this property's value as a string
+     * @todo This isn't right. Converting this to a string should include the name and params
      */
     public function __toString() {
     

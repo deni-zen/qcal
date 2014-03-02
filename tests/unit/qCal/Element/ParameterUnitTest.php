@@ -13,7 +13,6 @@ class ParameterUnitTest extends \qCal\UnitTest\TestCase {
     
         $trigger = new Property\Trigger('-PT10M', array('RELATED' => 'END'));
         $alarm = new Component\VAlarm(array('TRIGGER' => $trigger));
-        //pcom($alarm);
     
     }
 

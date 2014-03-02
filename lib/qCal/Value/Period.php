@@ -75,6 +75,9 @@ class Period extends \qCal\Value {
     
     /**
      * Cast from string to native qCal\Period object
+     * @todo Is it possible to preserve a duration rather than convert to a
+     *       period with set start/end times? It would be ideal to preserve
+     *       rather than lose that information.
      */
     protected function cast($value) {
     

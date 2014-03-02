@@ -50,5 +50,22 @@ class PropertyUnitTest extends \qCal\UnitTest\TestCase {
         $this->assertIdentical($v->getCore(), $cal);
     
     }
+    
+    /**
+     * @todo Value array is supposed to be returned in a specific order -- see RFC FREEBUSY property
+     * @todo I cannot do __toString() test correctly here because Period doesn't preserve durations. It
+     *       converts to set start/end. I intend to fix this eventually.
+     */
+    public function testMultiValuePropertyFreeBusy() {
+    
+        $prop = new Property\FreeBusy('19970208T200000Z/PT1H');
+        $prop->addValue('19970308T230000Z/19970309T000000Z')
+             ->addValue('19970408T200000Z/PT1H')
+             ->addValue('19970308T160000Z/PT3H');
+        $this->assertEqual($prop->getValue(), array(new Value\Period('19970208T200000Z/PT1H'),new Value\Period('19970308T230000Z/19970309T000000Z'),new Value\Period('19970408T200000Z/PT1H'),new Value\Period('19970308T160000Z/PT3H')));
+        // @todo This is the incorrect behavior for many reasons
+        $this->assertEqual($prop->__toString(), '19970208T200000Z/19970208T210000Z,19970308T230000Z/19970309T000000Z,19970408T200000Z/19970408T210000Z,19970308T160000Z/19970308T190000Z');
+    
+    }
 
 }
