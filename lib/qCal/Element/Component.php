@@ -306,5 +306,20 @@ abstract class Component extends \qCal\Element {
         return $ret;
     
     }
+    
+    /**
+     * Remove property
+     * @param string The name of the property to be removed
+     * @return $this
+     * @todo Write unit test for this
+     */
+    public function removeProperty($name) {
+    
+        if ($this->hasProperty($name)) {
+            unset($this->properties[$name]);
+        }
+        return $this;
+    
+    }
 
 }

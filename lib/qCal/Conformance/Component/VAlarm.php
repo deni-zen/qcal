@@ -3,83 +3,6 @@
  * VALARM Component Conformance
  *
  * RFC 5545 Definition
- *
-
- * 
-
- * The "TRIGGER" property specifies when the alarm will be triggered.
- * The "TRIGGER" property specifies a duration prior to the start of an
- * event or a to-do. The "TRIGGER" edge may be explicitly set to be
- * relative to the "START" or "END" of the event or to-do with the
- * "RELATED" parameter of the "TRIGGER" property. The "TRIGGER" property
- * value type can alternatively be set to an absolute calendar date and
- * time of day value.
- * 
- * In an alarm set to trigger on the "START" of an event or to-do, the
- * "DTSTART" property MUST be present in the associated event or to-do.
- * In an alarm in a "VEVENT" calendar component set to trigger on the
- * "END" of the event, either the "DTEND" property MUST be present, or
- * the "DTSTART" and "DURATION" properties MUST both be present. In an
- * alarm in a "VTODO" calendar component set to trigger on the "END" of
- * the to-do, either the "DUE" property MUST be present, or the
- * "DTSTART" and "DURATION" properties MUST both be present.
- * 
- * The alarm can be defined such that it triggers repeatedly. A
- * definition of an alarm with a repeating trigger MUST include both the
- * "DURATION" and "REPEAT" properties. The "DURATION" property specifies
- * the delay period, after which the alarm will repeat. The "REPEAT"
- * property specifies the number of additional repetitions that the
- * alarm will triggered. This repitition count is in addition to the
- * initial triggering of the alarm. Both of these properties MUST be
- * present in order to specify a repeating alarm. If one of these two
- * properties is absent, then the alarm will not repeat beyond the
- * initial trigger.
- * 
- * The "ACTION" property is used within the "VALARM" calendar component
- * to specify the type of action invoked when the alarm is triggered.
- * The "VALARM" properties provide enough information for a specific
- * action to be invoked. It is typically the responsibility of a
- * "Calendar User Agent" (CUA) to deliver the alarm in the specified
- * fashion. An "ACTION" property value of AUDIO specifies an alarm that
- * causes a sound to be played to alert the user; DISPLAY specifies an
- * alarm that causes a text message to be displayed to the user; EMAIL
- * specifies an alarm that causes an electronic email message to be
- * delivered to one or more email addresses; and PROCEDURE specifies an
- * alarm that causes a procedure to be executed. The "ACTION" property
- * MUST specify one and only one of these values.
- * 
- * In an AUDIO alarm, if the optional "ATTACH" property is included, it
- * MUST specify an audio sound resource. The intention is that the sound
- * will be played as the alarm effect. If an "ATTACH" property is
- * specified that does not refer to a sound resource, or if the
- * specified sound resource cannot be rendered (because its format is
- * unsupported, or because it cannot be retrieved), then the CUA or
- * other entity responsible for playing the sound may choose a fallback
- * action, such as playing a built-in default sound, or playing no sound
- * at all.
- * 
- * In a DISPLAY alarm, the intended alarm effect is for the text value
- * of the "DESCRIPTION" property to be displayed to the user.
- * 
- * In an EMAIL alarm, the intended alarm effect is for an email message
- * to be composed and delivered to all the addresses specified by the
- * "ATTENDEE" properties in the "VALARM" calendar component. The
- * "DESCRIPTION" property of the "VALARM" calendar component MUST be
- * used as the body text of the message, and the "SUMMARY" property MUST
- * be used as the subject text. Any "ATTACH" properties in the "VALARM"
- * calendar component SHOULD be sent as attachments to the message.
- * 
- * In a PROCEDURE alarm, the "ATTACH" property in the "VALARM" calendar
- * component MUST specify a procedure or program that is intended to be
- * invoked as the alarm effect. If the procedure or program is in a
- * format that cannot be rendered, then no procedure alarm will be
- * invoked. If the "DESCRIPTION" property is present, its value
- * specifies the argument string to be passed to the procedure or
- * program. "Calendar User Agents" that receive an iCalendar object with
- * this category of alarm, can disable or allow the "Calendar User" to
- * disable, or otherwise ignore this type of alarm. While a very useful
- * alarm capability, the PROCEDURE type of alarm SHOULD be treated by
- * the "Calendar User Agent" as a potential security risk.
  * 
  * @package     qCal
  * @subpackage  qCal\Conformance
@@ -92,7 +15,8 @@ use \qCal\Element,
     \qCal\Exception\Conformance\Exception as ConformanceException,
     \qCal\Exception\Conformance\UnexpectedValueException,
     \qCal\Exception\Conformance\RequiredPropertyException,
-    \qCal\Exception\Conformance\AllowedParentException;
+    \qCal\Exception\Conformance\AllowedParentException,
+    \qCal\Exception\Conformance\PropertyConformanceException;
 
 class VAlarm extends \qCal\Conformance\Component {
 
@@ -117,6 +41,11 @@ class VAlarm extends \qCal\Conformance\Component {
      */
     public function conform(Element\Component\VAlarm $cmpnt) {
     
+        if ($parent = $cmpnt->getParent()) {
+            if (!in_array($parent->getName(), $this->allowedParents)) {
+                throw new AllowedParentException($cmpnt->getName() . ' component cannot be nested within ' . $parent->getName() . ' component');
+            }
+        }
         $required = new RequiredPropertyException($cmpnt);
         if ($cmpnt->hasProperty('ACTION')) {
             $action = $cmpnt->getProperty('ACTION');
@@ -147,16 +76,44 @@ class VAlarm extends \qCal\Conformance\Component {
         } else {
             $required->add('ACTION');
         }
+        /**
+         * Trigger relational alarm - Alarms can be triggered in relation to the
+         * start/end of its parent component. When trigger is set to relate to
+         * start/end, the parent component must have start/end properties set
+         */
         if (!$cmpnt->hasProperty('TRIGGER')) {
             $required->add('TRIGGER');
+        } else {
+            $trigger = $cmpnt->getProperty('TRIGGER');
+            if ($trigger->hasParam('RELATED')) {
+                $parent = $cmpnt->getParent();
+                switch ($trigger->getParam('RELATED')->getValue()) {
+                    case 'START':
+                        if (!$parent->hasProperty('DTSTART')) throw new PropertyConformanceException('VALARM parent component must have DTSTART property if VALARM is set to trigger in relation to parent\'s start');
+                        break;
+                    case 'END':
+                        if (!$parent->hasProperty('DTEND') && (!$parent->hasProperty('DTSTART') || !$parent->hasProperty('DURATION'))) {
+                            throw new PropertyConformanceException('VALARM parent component must have DTEND or DTSTART/DURATION property if VALARM is set to trigger in relation to parent\'s end');
+                        }
+                        break;
+                    default:
+                        // @todo Should this throw an exception? I think it's more of a parameter conformance issue
+                }
+            }
         }
+        /**
+         * Repeating alarms require repeat and duration to be set
+         */
+        if ($cmpnt->hasProperty('REPEAT')) {
+            $repeat = $cmpnt->getProperty('REPEAT')->getValue();
+            // @todo If I'm reading the RFC correctly, only repeating alarms with a repeat value of more than one need a duration but I'm not sure
+            if ($repeat->getValue() > 1) {
+                if (!$parent->hasProperty('DURATION')) throw new PropertyConformanceException('Repeating VALARM requires both REPEAT and DURATION properties');
+            }
+        }
+        
         if ($required->hasMissing()) {
             throw $required;
-        }
-        if ($parent = $cmpnt->getParent()) {
-            if (!in_array($parent->getName(), $this->allowedParents)) {
-                throw new AllowedParentException($cmpnt->getName() . ' component cannot be nested within ' . $parent->getName() . ' component');
-            }
         }
     
     }

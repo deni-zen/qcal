@@ -70,7 +70,12 @@ function pprop($prop) {
             }
             // $print .= implode(';', $params)
         }
-        $print .= ": " . $prop->getValue() . "<br>";
+        if (is_array($prop->getValue())) {
+            $value = implode(',', $prop->getValue());
+        } else {
+            $value = $prop->getValue();
+        }
+        $print .= ": " . $value . "<br>";
     }
     print $print;
 

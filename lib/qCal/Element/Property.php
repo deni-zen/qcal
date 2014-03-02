@@ -189,7 +189,7 @@ abstract class Property extends \qCal\Element {
     public function getParam($name) {
     
         $name = strtoupper($name);
-        if (array_key_exists($name, $this->params)) {
+        if ($this->hasParam($name)) {
             return $this->params[$name];
         }
         // @todo Throw exception?
@@ -213,6 +213,17 @@ abstract class Property extends \qCal\Element {
     public function hasParams() {
     
         return !empty($this->params);
+    
+    }
+    
+    /**
+     * Check if property has a specific parameter
+     * @param string Parameter name
+     * @return boolean True if property has parameter set
+     */
+    public function hasParam($name) {
+    
+        return array_key_exists($name, $this->params);
     
     }
     

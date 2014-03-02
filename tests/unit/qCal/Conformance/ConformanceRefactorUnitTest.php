@@ -13,7 +13,8 @@ use \qCal\Conformance as Conf,
     \qCal\Element,
     \qCal\Exception\Conformance\Exception as ConformanceException,
     \qCal\Exception\Conformance\RequiredPropertyException,
-    \qCal\Exception\Conformance\AllowedParentException;
+    \qCal\Exception\Conformance\AllowedParentException,
+    \qCal\Exception\Conformance\PropertyConformanceException;
 
 class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
 
@@ -113,6 +114,65 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
         $alarm = clone $this->cmpnts['VALARM'];
         $calendar = clone $this->cmpnts['VCALENDAR'];
         $calendar->attach($alarm);
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVAlarmTriggerRelatedStart() {
+    
+        $this->expectException(new PropertyConformanceException('VALARM parent component must have DTSTART property if VALARM is set to trigger in relation to parent\'s start'));
+        $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'START'))));
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->removeProperty('DTSTART');
+        $event->attach($alarm);
+        $calendar->attach($event);
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVAlarmTriggerRelatedDtEnd() {
+    
+        $this->expectException(new PropertyConformanceException('VALARM parent component must have DTEND or DTSTART/DURATION property if VALARM is set to trigger in relation to parent\'s end'));
+        $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'END'))));
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->attach($alarm);
+        $calendar->attach($event);
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVAlarmTriggerRelatedDtStartAndDuration() {
+    
+        $this->expectException(new PropertyConformanceException('VALARM parent component must have DTEND or DTSTART/DURATION property if VALARM is set to trigger in relation to parent\'s end'));
+        $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'END'))));
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->removeProperty('DTSTART');
+        $event->addProperty(new Element\Property\Duration('-PT5M'));
+        $event->attach($alarm);
+        $calendar->attach($event);
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVAlarmRepeatRequiresDuration() {
+    
+        $this->expectException(new PropertyConformanceException('Repeating VALARM requires both REPEAT and DURATION properties'));
+        $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'START')), 'REPEAT' => 4));
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->attach($alarm);
+        $calendar->attach($event);
+        
         $visitor = new Conf\Visitor();
         $calendar->accept($visitor);
     
