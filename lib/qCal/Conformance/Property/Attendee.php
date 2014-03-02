@@ -39,7 +39,7 @@ class Attendee extends \qCal\Conformance\Property {
     /**
      * @var array A list of components the property is allowed to be defined on.
      */
-    protected $allowedComponents = array('VEVENT','VTODO','VJOURNAL','VALARM');
+    protected $allowedComponents = array('VEVENT','VTODO','VJOURNAL','VALARM','VFREEBUSY');
     
     /**
      * Check that this property is conformant

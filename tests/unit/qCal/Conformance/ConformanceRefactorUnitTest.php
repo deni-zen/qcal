@@ -11,7 +11,9 @@
 namespace qCal\UnitTest\Conformance;
 use \qCal\Conformance as Conf,
     \qCal\Element,
-    \qCal\Exception\Conformance\Exception as ConformanceException;
+    \qCal\Exception\Conformance\Exception as ConformanceException,
+    \qCal\Exception\Conformance\RequiredPropertyException,
+    \qCal\Exception\Conformance\AllowedParentException;
 
 class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
 
@@ -22,7 +24,6 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
     
     public function setUp() {
     
-        /*
         $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => 'PT15M'));
         $calendar = new Element\Component\VCalendar(array('PRODID' => '-//Luke Visinoni//qCal v0.1//EN', 'VERSION' => '2.0'));
         $event = new Element\Component\VEvent(array(
@@ -79,25 +80,41 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
             'STATUS' => 'NEEDS-ACTION'
         ));
         $this->cmpnts = array(
-            'VCALENDAR' => $calendar,
-            'VALARM' => $alarm,
-            'VEVENT' => $event,
-            'VFREEBUSY' => $freebusy,
-            'VJOURNAL' => $journal,
-            'VTIMEZONE' => $timezone,
-            'VTODO' => $todo
-        );*/
+            'VCALENDAR' => clone $calendar,
+            'VALARM' => clone $alarm,
+            'VEVENT' => clone $event,
+            'VFREEBUSY' => clone $freebusy,
+            'VJOURNAL' => clone $journal,
+            'VTIMEZONE' => clone $timezone,
+            'VTODO' => clone $todo
+        );
+        $event->attach($alarm);
+        $calendar->attach($event);
+        $calendar->attach($freebusy);
+        $calendar->attach($journal);
+        $calendar->attach($timezone);
+        $calendar->attach($todo);
+        $this->cmpnts['qCal'] = $calendar;
     
     }
     
+    // so long as no exception is thrown this test passes
     public function testComponentConformance() {
     
-        /*
-        $cmpnt = new Element\Component\VCalendar(array(
-            'PRODID' => '-//Luke Visinoni//qCal v0.1//EN',
-            'VERSION' => '2.0'
-        ), array($event, $todo));
-        pre($cmpnt);*/
+        $visitor = new Conf\Visitor();
+        $this->cmpnts['qCal']->accept($visitor);
+        $this->assertTrue(true);
+    
+    }
+    
+    public function testVAlarmCannotBeTopLevel() {
+    
+        $this->expectException(new AllowedParentException('VALARM component cannot be nested within VCALENDAR component'));
+        $alarm = clone $this->cmpnts['VALARM'];
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $calendar->attach($alarm);
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
     
     }
 

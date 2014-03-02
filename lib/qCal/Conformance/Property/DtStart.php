@@ -47,7 +47,7 @@ class DtStart extends \qCal\Conformance\Property {
     /**
      * @var array A list of components the property is allowed to be defined on.
      */
-    protected $allowedComponents = array('VEVENT','VTODO','VFREEBUSY','STANDARD','DAYLIGHT');
+    protected $allowedComponents = array('VEVENT','VTODO','VFREEBUSY', 'VJOURNAL', 'STANDARD','DAYLIGHT');
     
     /**
      * Check that this property is conformant

@@ -23,7 +23,7 @@ class RDate extends \qCal\Conformance\Property {
     /**
      * @var array A list of components the property is allowed to be defined on.
      */
-    protected $allowedComponents = array('VEVENT','VTODO','VJOURNAL','VTIMEZONE');
+    protected $allowedComponents = array('VEVENT','VTODO','VJOURNAL','VTIMEZONE', 'STANDARD', 'DAYLIGHT');
     
     /**
      * Check that this property is conformant

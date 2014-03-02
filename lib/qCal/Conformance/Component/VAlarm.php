@@ -7,29 +7,6 @@
 
  * 
 
- * 
-
- * 
- * When the action is "EMAIL", the alarm MUST include a "DESCRIPTION"
- * property, which contains the text to be used as the message body, a
- * "SUMMARY" property, which contains the text to be used as the message
- * subject, and one or more "ATTENDEE" properties, which contain the
- * email address of attendees to receive the message. It can also
- * include one or more "ATTACH" properties, which are intended to be
- * sent as message attachments. When the alarm is triggered, the email
- * message is sent.
- *
- * The Procedure action has been deprecated. 
- * When the action is "PROCEDURE", the alarm MUST include one and only
- * one "ATTACH" property, which MUST point to a procedure resource,
- * which is invoked when the alarm is triggered.
- * 
- * The "VALARM" calendar component MUST only appear within either a
- * "VEVENT" or "VTODO" calendar component. "VALARM" calendar components
- * cannot be nested. Multiple mutually independent "VALARM" calendar
- * components can be specified for a single "VEVENT" or "VTODO" calendar
- * component.
- * 
  * The "TRIGGER" property specifies when the alarm will be triggered.
  * The "TRIGGER" property specifies a duration prior to the start of an
  * event or a to-do. The "TRIGGER" edge may be explicitly set to be
@@ -112,7 +89,10 @@
  */
 namespace qCal\Conformance\Component;
 use \qCal\Element,
-    \qCal\Exception\Conformance\Exception as ConformanceException;
+    \qCal\Exception\Conformance\Exception as ConformanceException,
+    \qCal\Exception\Conformance\UnexpectedValueException,
+    \qCal\Exception\Conformance\RequiredPropertyException,
+    \qCal\Exception\Conformance\AllowedParentException;
 
 class VAlarm extends \qCal\Conformance\Component {
 
@@ -124,48 +104,59 @@ class VAlarm extends \qCal\Conformance\Component {
     protected $reqProperties = array('ACTION','TRIGGER');
     
     /**
+     * @var array A list of allowed parent components
+     */
+    protected $allowedParents = array('VEVENT', 'VTODO');
+    
+    /**
      * Check that this component is conformant
      * @param qCal\Element\Component
      * @todo I just wanted to get this working so I hastily threw this together.
      *       Once I have some time to spend on it, refactor and make this neater
+     *       Extract as much functionality as possible up into the parent class
      */
     public function conform(Element\Component\VAlarm $cmpnt) {
     
-        $missing = array();
+        $required = new RequiredPropertyException($cmpnt);
         if ($cmpnt->hasProperty('ACTION')) {
             $action = $cmpnt->getProperty('ACTION');
             switch((string) $action) {
                 case 'AUDIO':
                     break;
                 case 'DISPLAY':
-                    if (!$cmpnt->hasProperty('DESCRIPTION')) $missing[] = 'DESCRIPTION';
+                    if (!$cmpnt->hasProperty('DESCRIPTION')) $required->add('DESCRIPTION');
                     break;
                 case 'EMAIL':
-                    if (!$cmpnt->hasProperty('DESCRIPTION')) $missing[] = 'DESCRIPTION';
-                    if (!$cmpnt->hasProperty('SUMMARY')) $missing[] = 'SUMMARY';
-                    if (!$cmpnt->hasProperty('ATTENDEE')) $missing[] = 'ATTENDEE';
+                    if (!$cmpnt->hasProperty('DESCRIPTION')) $required->add('DESCRIPTION');
+                    if (!$cmpnt->hasProperty('SUMMARY')) $required->add('SUMMARY');
+                    if (!$cmpnt->hasProperty('ATTENDEE')) $required->add('ATTENDEE');
                     break;
                 /* @todo PROCEDURE action has been deprecated. I do want this
                  * library to be capable of supporting it though. So maybe it
                  * should be possible to toggle support for it with a config
                  * setting or something
                 case 'PROCEDURE':
-                    if (!$cmpnt->hasProperty('ATTACH')) $missing[] = 'ATTACH';
+                    if (!$cmpnt->hasProperty('ATTACH')) $required->add('ATTACH');
                     break;
                  */
                 default:
                     // @todo Throw a more specific exception here
-                    throw new ConformanceException('Unsupported value for ACTION property: ' . $action);
+                    throw new UnexpectedValueException('Unsupported value for ACTION property: ' . $action);
                     break;
             }
         } else {
-            $missing[] = 'ACTION';
+            $required->add('ACTION');
         }
         if (!$cmpnt->hasProperty('TRIGGER')) {
-            $missing[] = 'TRIGGER';
+            $required->add('TRIGGER');
         }
-        if (!empty($missing)) {
-            $this->raiseRequiredPropertiesException($cmpnt, $missing);
+        if ($required->hasMissing()) {
+            throw $required;
+        }
+        if ($parent = $cmpnt->getParent()) {
+            if (!in_array($parent->getName(), $this->allowedParents)) {
+                throw new AllowedParentException($cmpnt->getName() . ' component cannot be nested within ' . $parent->getName() . ' component');
+            }
         }
     
     }

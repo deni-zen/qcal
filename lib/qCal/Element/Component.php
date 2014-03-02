@@ -81,10 +81,28 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\Element;
-use \qCal\Exception\Element\Property\UndefinedException;
+use \qCal\Exception\Element\Property\UndefinedException as UndefinedPropertyException,
+    \qCal\Exception\Element\Component\UndefinedException as UndefinedComponentException;
 
 abstract class Component extends \qCal\Element {
 
+    /**
+     * @var array Mapping of component names to class names
+     * @todo I would prefer not to have to have a map, but I also don't want to
+     *       have the ugly class names I had before. So this is fine for now.
+     */
+    static protected $componentMap = array(
+        'DAYLIGHT'  => 'DayLight',
+        'STANDARD'  => 'Standard',
+        'VALARM'    => 'VAlarm',
+        'VCALENDAR' => 'VCalendar',
+        'VEVENT'    => 'VEvent',
+        'VFREEBUSY' => 'VFreeBusy',
+        'VJOURNAL'  => 'VJournal',
+        'VTIMEZONE' => 'VTimeZone',
+        'VTODO'     => 'VTodo',
+    );
+    
     /**
      * Component Name
      * @var string Component name
@@ -118,15 +136,28 @@ abstract class Component extends \qCal\Element {
     
         foreach ($components as $name => $val) {
             if (!($val instanceof Component)) {
-                
+                $val = Component::generate($name, $val);
             }
-            $this->attach($c);
+            $this->attach($val);
         }
         foreach($properties as $name => $val) {
             if (!($val instanceof Property)) {
-                // $prop = Element\Property::generate($name, $val);
+                $val = Property::generate($name, $val);
             }
-            $this->addProperty($p);
+            $this->addProperty($val);
+        }
+    
+    }
+    
+    static public function generate($name, $value) {
+    
+        try {
+            $className = 'qCal\\Element\\Component\\' . self::$componentMap[$name];
+            Loader::loadClass($className);
+            return new $className($value);
+        } catch (FileNotFound $e) {
+            // @todo is this the right exception?
+            throw new UndefinedComponentException($name . ' is not a known component type');
         }
     
     }
@@ -257,7 +288,7 @@ abstract class Component extends \qCal\Element {
             $props = $this->getProperties($name);
             return $props[0];
         }
-        throw new UndefinedException($name . ' property is not defined.');
+        throw new UndefinedPropertyException($name . ' property is not defined.');
     
     }
     

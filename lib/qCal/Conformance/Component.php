@@ -12,7 +12,7 @@
  */
 namespace qCal\Conformance;
 use \qCal\Element,
-    \qCal\Exception\Conformance\Exception as ConformanceException;
+    \qCal\Exception\Conformance\AllowedParentException;
 
 abstract class Component {
 
@@ -22,32 +22,30 @@ abstract class Component {
     protected $reqProperties = array();
     
     /**
+     * @var array A list of allowed parent components
+     */
+    protected $allowedParents = array();
+    
+    /**
      * Conformance check
      * Performs conformance-checking on the component 
      */
     public function conform(Element\Component $cmpnt) {
     
-        $missing = array();
+        $required = new RequiredPropertyException($cmpnt);
         foreach ($this->reqProperties as $req) {
             if (!$cmpnt->hasProperty($req)) {
-                $missing[] = $req;
+                $required->add($req);
             }
         }
-        if (!empty($missing)) {
-            $this->raiseRequiredPropertiesException($cmpnt, $missing);
+        if ($parent = $cmpnt->getParent()) {
+            if (!in_array($parent->getName(), $this->allowedParents)) {
+                throw new AllowedParentException($cmpnt->getName() . ' component cannot be nested within ' . $parent->getName() . ' component');
+            }
         }
-    
-    }
-    
-    /**
-     * Call after conformance-checking if required properties are missing.
-     * @param array A list of undefined required properties
-     * @throws qCal\Exception\Conformance\Exception
-     * @todo Create and implement a more specific exception for this purpose
-     */
-    protected function raiseRequiredPropertiesException(Element\Component $cmpnt, $reqs) {
-    
-        throw new ConformanceException($cmpnt->getName() . ' missing required properties: ' . implode(', ', $reqs));
+        if ($required->hasMissing()) {
+            throw $required;
+        }
     
     }
 

@@ -37,6 +37,47 @@ function pr($var, $return = false) {
 }
 
 /**
+ * Debugging function - Dumps component in a human-readable way
+ */
+function pcom($com, $depth = 0) {
+
+    $depth++;
+    echo '<div style="font-family: lucida grande; margin: 10px; padding: 10px 25px; border: 1px solid #999; background-color: #bbb">';
+    if ($com instanceof \qCal\Element\Component) {
+        echo pad('<strong style="text-decoration: underline;">' . $com->getName() . '</strong>', $depth) . "<br>";
+        foreach ($com->getAllProperties() as $prop) {
+            pprop($prop, $depth);
+        }
+        foreach ($com->getAllChildren() as $child) {
+            pcom($child, $depth);
+        }
+    } else {
+        echo 'Not A Component';
+        pr($com);
+    }
+    echo "</div>";
+
+}
+
+function pprop($prop, $depth = 0) {
+
+    if ($prop instanceof \qCal\Element\Property) {
+        echo pad('<strong>' . $prop->getName() . "</strong>: " . $prop->getValue() . "<br>", $depth);
+    }
+
+}
+
+function pad($string, $pad, $padder = "&nbsp;") {
+
+    $ret = '';
+    for($i = 1; $i < $pad; $i++) {
+        $ret .= $padder;
+    }
+    return $ret . $string;
+
+}
+
+/**
  * Allows stuff like this with(new Object())->doStuff()
  */
 function with($obj) {
