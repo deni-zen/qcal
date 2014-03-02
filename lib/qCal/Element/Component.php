@@ -256,13 +256,25 @@ abstract class Component extends \qCal\Element {
     
     /**
      * Check if this component has a certain property defined
-     * @param string The name of the property to test for
+     * @param mixed The name(s) of the property to test for. If an array is
+     *              passed in, return true if any of them are set
      * @todo Test this
      */
     public function hasProperty($name) {
     
-        $props = $this->getProperties($name);
-        return !empty($props);
+        if (is_array($name)) {
+            foreach ($name as $n) {
+                try {
+                    $this->getProperty($n);
+                    return true;
+                } catch (UndefinedPropertyException $e) {
+                    // do nothing
+                }
+            }
+        } else {
+            $props = $this->getProperties($name);
+            return !empty($props);
+        }
     
     }
     

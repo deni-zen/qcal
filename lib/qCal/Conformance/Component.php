@@ -12,7 +12,8 @@
  */
 namespace qCal\Conformance;
 use \qCal\Element,
-    \qCal\Exception\Conformance\AllowedParentException;
+    \qCal\Exception\Conformance\AllowedParentException,
+    \qCal\Exception\Conformance\RequiredPropertyException;
 
 abstract class Component {
 
