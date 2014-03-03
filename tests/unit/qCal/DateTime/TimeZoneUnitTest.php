@@ -7,12 +7,20 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\UnitTest\DateTime;
+use \qCal\DateTime as DT;
 
 class TimeZoneUnitTest extends \qCal\UnitTest\TestCase {
 
     public function setUp() {
     
         
+    
+    }
+    
+    public function testTimeZoneAltersLocalTime() {
+    
+        $dtz = new DT\TimeZone('America/Paradise_CA');
+        $this->assertEqual($dtz->getId(), 'America/Paradise_CA');
     
     }
 
