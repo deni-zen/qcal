@@ -17,12 +17,21 @@ class DateTimeUnitTest extends \qCal\UnitTest\TestCase {
     
     }
     
-    public function testConstructDateTimeWithString() {
+    public function testLocalDateTimeGetters() {
     
         $dt = new DateTime('20140423T000000');
         $this->assertEqual($dt->toDateTime(), '20140423T000000');
         $this->assertEqual($dt->toDate(), '20140423');
         $this->assertEqual($dt->toTime(), '000000');
+    
+    }
+    
+    public function testUTCDateTimeGetters() {
+    
+        $dt = new DateTime('20140423T000000');
+        $this->assertEqual($dt->toUtcDateTime(), '20140423T000000Z');
+        $this->assertEqual($dt->toUtcDate(), '20140423');
+        $this->assertEqual($dt->toUtcTime(), '000000Z');
     
     }
     

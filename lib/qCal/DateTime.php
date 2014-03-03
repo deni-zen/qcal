@@ -16,11 +16,16 @@ class DateTime {
     /**
      * Date format constants
      */
-    const FORMAT_DATE = 'Ymd';
     
+    // Floating date/time formats
     const FORMAT_DATETIME = 'Ymd\THis';
-    
+    const FORMAT_DATE = 'Ymd';
     const FORMAT_TIME = 'His';
+    
+    // UTC date/time formats
+    const FORMAT_UTC_DATETIME = 'Ymd\THis\Z';
+    const FORMAT_UTC_DATE = 'Ymd';
+    const FORMAT_UTC_TIME = 'His\Z';
     
     /**
      * @var \DateTime DateTime class
@@ -34,6 +39,9 @@ class DateTime {
     
     /**
      * Class constructor
+     * The date/time is saved internally as a UTC date/time object. Only when
+     * specifically asked for local time does it apply the time zone offset.
+     * 
      * @param string Date/Time input
      * @param qCal\DateTime\TimeZone The time zone for this date/time
      */
@@ -48,6 +56,8 @@ class DateTime {
      * Uses subset of PHP's date() class
      * @param string The format string
      * @return string The date/time formatted according to $format
+     * @todo Add $local = false param - tells it to format it in local time
+     *       according to $this->tz
      */
     protected function format($format) {
     
@@ -55,6 +65,9 @@ class DateTime {
     
     }
     
+    /**
+     * Get timestamp (timestamp is UTC timestamp)
+     */
     public function getTimestamp() {
     
         return $this->dt->getTimestamp();
@@ -64,6 +77,7 @@ class DateTime {
     /**
      * Return date/time as UTC
      * @todo Make sure this is always right no matter the timezone
+     * @todo remove this method, use toUtcDateTime() instead
      */
     public function toUtc() {
     
@@ -72,7 +86,18 @@ class DateTime {
     }
     
     /**
+     * Return date/time formatted as YYYYMMDDTHHMMSS
+     * @todo Once TimeZones are implemented, this needs to take offset into account
+     */
+    public function toDateTime() {
+    
+        return $this->format(self::FORMAT_DATETIME);
+    
+    }
+    
+    /**
      * Return date formatted as YYYYMMDD
+     * @todo Once TimeZones are implemented, this needs to take offset into account
      */
     public function toDate() {
     
@@ -80,15 +105,41 @@ class DateTime {
     
     }
     
+    /**
+     * Return time formatted as HHMMSS
+     * @todo Once TimeZones are implemented, this needs to take offset into account
+     */
     public function toTime() {
     
         return $this->format(self::FORMAT_TIME);
     
     }
     
-    public function toDateTime() {
+    /**
+     * Get Date/Time in UTC Format
+     */
+    public function toUtcDateTime() {
     
-        return $this->format(self::FORMAT_DATETIME);
+        return $this->format(self::FORMAT_UTC_DATETIME);
+    
+    }
+    
+    /**
+     * Get Time in UTC Format
+     */
+    public function toUtcTime() {
+    
+        return $this->format(self::FORMAT_UTC_TIME);
+    
+    }
+    
+    /**
+     * Get Date in UTC Format
+     * In some cases, UTC date will be different than local date
+     */
+    public function toUtcDate() {
+    
+        return $this->format(self::FORMAT_UTC_DATE);
     
     }
 
