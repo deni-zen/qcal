@@ -113,7 +113,7 @@ class DateTime extends \qCal\Value {
 
     public function toString() {
     
-        return $this->value->format('Ymd\THis');
+        return $this->value->toDateTime();
 
     
     }

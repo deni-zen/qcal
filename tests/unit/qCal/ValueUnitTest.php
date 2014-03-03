@@ -113,7 +113,7 @@ class ValueUnitTest extends \qCal\UnitTest\TestCase {
         $date = new Value\Date('2014-04-23');
         $this->assertEqual($date->toString(), '20140423');
         $this->assertIsA($date->getValue(), 'qCal\\DateTime');
-        $this->assertEqual($date->getValue()->format('Ymd'), '20140423');
+        $this->assertEqual($date->getValue()->toDate(), '20140423');
         $genval = Value::generate('date', '2014-04-23');
         $this->assertEqual($date, $genval);
     
@@ -124,7 +124,7 @@ class ValueUnitTest extends \qCal\UnitTest\TestCase {
         $dt = new Value\DateTime('2014-04-23 01:00:00');
         $this->assertEqual($dt->toString(), '20140423T010000');
         $this->assertIsA($dt->getValue(), 'qCal\\DateTime');
-        $this->assertEqual($dt->getValue()->format('Ymd\THis'), '20140423T010000');
+        $this->assertEqual($dt->getValue()->toDateTime(), '20140423T010000');
         $genval = Value::generate('datetime', '2014-04-23 01:00:00');
         $this->assertEqual($dt, $genval);
     
@@ -184,7 +184,7 @@ class ValueUnitTest extends \qCal\UnitTest\TestCase {
         $time = new Value\Time('120000');
         $this->assertEqual($time->toString(), '120000');
         $this->assertIsA($time->getValue(), 'qCal\\DateTime');
-        $this->assertEqual($time->getValue()->format('His'), '120000');
+        $this->assertEqual($time->getValue()->toTime(), '120000');
         $genval = Value::generate('time', '120000');
         $this->assertEqual($time, $genval);
     

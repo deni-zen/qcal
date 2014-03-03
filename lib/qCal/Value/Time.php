@@ -116,7 +116,7 @@ class Time extends \qCal\Value {
 
     public function toString() {
     
-        return $this->value->format('His');
+        return $this->value->toTime();
 
     
     }

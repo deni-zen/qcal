@@ -47,7 +47,7 @@ class Date extends \qCal\Value {
 
     public function toString() {
     
-        return $this->value->format('Ymd');
+        return $this->value->toDate();
 
     
     }
