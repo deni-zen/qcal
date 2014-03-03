@@ -1,7 +1,7 @@
 <?php
 /**
- * Allowed parent component exception
- * Thrown when a component is added to a component it isn't allowed on.
+ * Required Child Exception
+ * Thrown when a component is required to have a child and doesn't
  *
  * @package     qCal
  * @subpackage  qCal\Conformance
@@ -11,7 +11,7 @@
  */
 namespace qCal\Exception\Conformance;
 
-class AllowedParentException extends Exception {
+class RequiredChildException extends Exception {
 
     
 

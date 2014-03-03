@@ -34,8 +34,8 @@ class RequiredPropertyException extends Exception {
     public function __construct(Component $cmpnt, array $missing = null, $code = 0, Exception $previous = null) {
     
         $this->setComponent($cmpnt);
-        $this->missing = $missing;
-        parent::__construct('No missing required properties specified', $code, $previous);
+        $this->setMissingProperties($missing);
+        parent::__construct($this->message, $code, $previous);
     
     }
     
@@ -59,6 +59,7 @@ class RequiredPropertyException extends Exception {
      */
     public function setMissingProperties($missing) {
     
+        if (is_null($missing)) return $this;
         if (!is_array($missing)) $missing = array($missing);
         $this->missing = $missing;
         $this->setMessage();

@@ -46,6 +46,9 @@ class VAlarm extends \qCal\Conformance\Component {
                 throw new AllowedParentException($cmpnt->getName() . ' component cannot be nested within ' . $parent->getName() . ' component');
             }
         }
+        /**
+         * @todo The exception here should probably point out that the ACTION property changes which properties are required
+         */
         $required = new RequiredPropertyException($cmpnt);
         if ($cmpnt->hasProperty('ACTION')) {
             $action = $cmpnt->getProperty('ACTION');

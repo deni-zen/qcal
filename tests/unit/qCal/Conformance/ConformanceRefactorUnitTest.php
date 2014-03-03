@@ -14,7 +14,8 @@ use \qCal\Conformance as Conf,
     \qCal\Exception\Conformance\Exception as ConformanceException,
     \qCal\Exception\Conformance\RequiredPropertyException,
     \qCal\Exception\Conformance\AllowedParentException,
-    \qCal\Exception\Conformance\PropertyConformanceException;
+    \qCal\Exception\Conformance\PropertyConformanceException,
+    \qCal\Exception\Conformance\RequiredChildException;
 
 class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
 
@@ -124,6 +125,7 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
         $this->expectException(new PropertyConformanceException('VALARM parent component must have DTSTART property if VALARM is set to trigger in relation to parent\'s start'));
         $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'START'))));
         $calendar = clone $this->cmpnts['VCALENDAR'];
+        $calendar->addProperty(new Element\Property\Method('REQUEST'));
         $event = clone $this->cmpnts['VEVENT'];
         $event->removeProperty('DTSTART');
         $event->attach($alarm);
@@ -153,6 +155,7 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
         $this->expectException(new PropertyConformanceException('VALARM parent component must have DTEND or DTSTART/DURATION property if VALARM is set to trigger in relation to parent\'s end'));
         $alarm = new Element\Component\VAlarm(array('ACTION' => 'AUDIO', 'TRIGGER' => new Element\Property\Trigger('PT15M', array('RELATED' => 'END'))));
         $calendar = clone $this->cmpnts['VCALENDAR'];
+        $calendar->addProperty(new Element\Property\Method('REQUEST'));
         $event = clone $this->cmpnts['VEVENT'];
         $event->removeProperty('DTSTART');
         $event->addProperty(new Element\Property\Duration('-PT5M'));
@@ -173,6 +176,111 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
         $event->attach($alarm);
         $calendar->attach($event);
         
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVTimeZoneMustHaveSubComponent() {
+    
+        $this->expectException(new RequiredChildException('VTIMEZONE must have at least one STANDARD or DAYLIGHT sub-component'));
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $timezone = new Element\Component\VTimeZone(array(
+            'TZID' => 'US-Eastern',
+            'LAST-MODIFIED' => '19870101T000000Z',
+        ));
+        $calendar->attach($timezone);
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVTodoRequiredUID() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $vtodo = clone $this->cmpnts['VTODO'];
+        $vtodo->removeProperty('UID');
+        $calendar->attach($vtodo);
+        
+        $this->expectException(new RequiredPropertyException($vtodo, array('UID')));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVTodoRequiredDtStamp() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $vtodo = clone $this->cmpnts['VTODO'];
+        $vtodo->removeProperty('DTSTAMP');
+        $calendar->attach($vtodo);
+        
+        $this->expectException(new RequiredPropertyException($vtodo, array('DTSTAMP')));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVTodoNotDueAndDuration() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $vtodo = clone $this->cmpnts['VTODO'];
+        $vtodo->addProperty(new Element\Property\Duration('P1D'));
+        $calendar->attach($vtodo);
+        
+        $this->expectException(new PropertyConformanceException('VTODO may define DUE or DURATION property but not both'));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVEventDtStartRequiredIfCoreDoesntSpecifyMethod() {
+    
+        $this->expectException(new PropertyConformanceException('DTSTART property is required for VEVENT component that appears in VCALENDAR that does not specify a METHOD property'));
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->removeProperty('DTSTART');
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $calendar->attach($event);
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVEventNotDtEndAndDuration() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $event = clone $this->cmpnts['VEVENT'];
+        $event->addProperty(new Element\Property\Duration('P1D'));
+        $event->addProperty(new Element\Property\DtEnd('20141020'));
+        $calendar->attach($event);
+        
+        $this->expectException(new PropertyConformanceException('VEVENT may define DTEND or DURATION property but not both'));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVCalendarRequiredPropertiesException() {
+    
+        $calendar = new Element\Component\VCalendar();
+        $this->expectException(new RequiredPropertyException($calendar, array('PRODID','VERSION')));
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testVCalendarCannotBeNested() {
+    
+        $calendar = new Element\Component\VCalendar();
+        $calendar2 = clone $calendar;
+        $calendar2->attach($calendar);
+        $this->expectException(new AllowedParentException('VCALENDAR component cannot be nested within another component'));
         $visitor = new Conf\Visitor();
         $calendar->accept($visitor);
     
