@@ -196,6 +196,42 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
     
     }
     
+    public function testTimeZoneStandardRequiredProperties() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $tz = clone $this->cmpnts['VTIMEZONE'];
+        $std = within($tz->getChildren(array('STANDARD', 'DAYLIGHT')), 0);
+        $std->removeProperty('DTSTART')
+            ->removeProperty('TZOFFSETTO')
+            ->removeProperty('TZOFFSETFROM');
+        $calendar->attach($tz);
+        
+        $this->assertEqual($std->getName(), 'STANDARD');
+        $this->expectException(new RequiredPropertyException($std, array('DTSTART','TZOFFSETTO','TZOFFSETFROM')));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
+    public function testTimeZoneDayLightRequiredProperties() {
+    
+        $calendar = clone $this->cmpnts['VCALENDAR'];
+        $tz = clone $this->cmpnts['VTIMEZONE'];
+        $day = within($tz->getChildren(array('STANDARD', 'DAYLIGHT')), 1);
+        $day->removeProperty('DTSTART')
+            ->removeProperty('TZOFFSETTO')
+            ->removeProperty('TZOFFSETFROM');
+        $calendar->attach($tz);
+        
+        $this->assertEqual($day->getName(), 'DAYLIGHT');
+        $this->expectException(new RequiredPropertyException($day, array('DTSTART','TZOFFSETTO','TZOFFSETFROM')));
+        
+        $visitor = new Conf\Visitor();
+        $calendar->accept($visitor);
+    
+    }
+    
     public function testVTodoRequiredUID() {
     
         $calendar = clone $this->cmpnts['VCALENDAR'];

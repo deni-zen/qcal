@@ -105,3 +105,16 @@ function with($obj) {
     return $obj;
 
 }
+
+/**
+ * "With Index" Gets index of an array
+ * Allows within(functionThatReturnsAnArray(), 0)->doSomething()
+ * Where before you'd have had to do $arr = functionThatReturnsAnArray(); $arr->doSomething()
+ * @todo Should this throw an exception?
+ */
+function within($array, $index = 0) {
+
+    if (array_key_exists($index, $array)) return $array[$index];
+    return false;
+
+}
