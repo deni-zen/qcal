@@ -41,18 +41,17 @@ require_once '../lib/autoload.php';
 require_once '../lib/utils/functions.php';
 
 // Include simpletest classes
+// @todo I should be using mock objects but I'm not because I'm lazy and sloppy
 require_once 'simpletest/unit_tester.php';
 require_once 'simpletest/reporter.php';
 require_once 'simpletest/mock_objects.php';
 
 // Include unit test cases
 require_once 'unit/qCal/TestCase.php';
-<<<<<<< HEAD
+require_once 'unit/QCalUnitTest.php';
 require_once 'unit/qCal/UtilityFunctionsUnitTest.php';
 require_once 'unit/qCal/LoaderUnitTest.php';
 require_once 'unit/qCal/ValueUnitTest.php';
-=======
->>>>>>> parent of 33a101a... Added unit tests for utility functions
 require_once 'unit/qCal/Parse/ReaderUnitTest.php';
 require_once 'unit/qCal/Parse/LexerUnitTest.php';
 require_once 'unit/qCal/Parse/LexerStateUnitTest.php';
@@ -62,15 +61,14 @@ require_once 'unit/qCal/DateTime/PeriodUnitTest.php';
 require_once 'unit/qCal/Element/ComponentUnitTest.php';
 require_once 'unit/qCal/Element/PropertyUnitTest.php';
 require_once 'unit/qCal/Element/ParameterUnitTest.php';
+// require_once 'unit/qCal/Conformance/ConformanceUnitTest.php';
+require_once 'unit/qCal/Conformance/ConformanceRefactorUnitTest.php';
 
 // Build test cases
 $test = new GroupTest('qCal iCalendar Library Tests');
-<<<<<<< HEAD
 $test->addTestCase(new qCal\UnitTest\LoaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\ValueUnitTest);
 $test->addTestCase(new qCal\UnitTest\UtilityFunctionsUnitTest);
-=======
->>>>>>> parent of 33a101a... Added unit tests for utility functions
 $test->addTestCase(new qCal\UnitTest\Parse\ReaderUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerUnitTest);
 $test->addTestCase(new qCal\UnitTest\Parse\LexerStateUnitTest);
@@ -80,6 +78,12 @@ $test->addTestCase(new qCal\UnitTest\DateTime\PeriodUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ComponentUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\PropertyUnitTest);
 $test->addTestCase(new qCal\UnitTest\Element\ParameterUnitTest);
+// @todo I have disabled these tests because I am refactoring the conformance
+//       rules and these will all fail during refactoring
+// @todo During refactoring, I have the new ConformanceRefactorUnitTest
+// $test->addTestCase(new qCal\UnitTest\Conformance\ConformanceUnitTest);
+$test->addTestCase(new qCal\UnitTest\Conformance\ConformanceRefactorUnitTest);
+$test->addTestCase(new qCal\UnitTest\QCalUnitTest);
 
 // Determine which reporter to use and run tests
 if (TextReporter::inCli()) {

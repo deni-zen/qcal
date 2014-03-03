@@ -30,10 +30,66 @@
  *              Property\MultiValue, etc.)
  */
 namespace qCal\Element;
-use \qCal\Value;
+use \qCal\Value,
+    \qCal\Element\Parameter;
 
 abstract class Property extends \qCal\Element {
 
+    /**
+     * @var array Mapping of property names to class names
+     * @todo I would prefer not to have to have a map, but I also don't want to
+     *       have the ugly class names I had before. So this is fine for now.
+     */
+    static protected $propertyMap = array(
+        'ACTION'            => 'Action',
+        'ATTACH'            => 'Attach',
+        'ATTENDEE'          => 'Attendee',
+        'CALSCALE'          => 'CalScale',
+        'CATEGORIES'        => 'Categories',
+        'CLASS'             => 'Classification',
+        'COMMENT'           => 'Comment',
+        'COMPLETED'         => 'Completed',
+        'CONTACT'           => 'Contact',
+        'CREATED'           => 'Created',
+        'DESCRIPTION'       => 'Description',
+        'DTEND'             => 'DtEnd',
+        'DTSTAMP'           => 'DtStamp',
+        'DTSTART'           => 'DtStart',
+        'DUE'               => 'Due',
+        'DURATION'          => 'Duration',
+        'EXDATE'            => 'ExDate',
+        'EXRULE'            => 'ExRule',
+        'FREEBUSY'          => 'FreeBusy',
+        'GEO'               => 'Geo',
+        'LAST-MODIFIED'     => 'LastModified',
+        'LOCATION'          => 'Location',
+        'METHOD'            => 'Method',
+        'ORGANIZER'         => 'Organizer',
+        'PERCENT-COMPLETE'  => 'PercentComplete',
+        'PRIORITY'          => 'Priority',
+        'PRODID'            => 'ProdId',
+        'RDATE'             => 'RDate',
+        'RECURRENCE-ID'     => 'RecurrenceId',
+        'RELATED-TO'        => 'RelatedTo',
+        'REPEAT'            => 'Repeat',
+        'REQUEST-STATUS'    => 'RequestStatus',
+        'RESOURCES'         => 'Resources',
+        'RRULE'             => 'RRule',
+        'SEQUENCE'          => 'Sequence',
+        'STATUS'            => 'Status',
+        'SUMMARY'           => 'Summary',
+        'TRANSP'            => 'Transp',
+        'TRIGGER'           => 'Trigger',
+        'TZID'              => 'TZID',
+        'TZNAME'            => 'TZName',
+        'TZOFFSETFROM'      => 'TZOffsetFrom',
+        'TZOFFSETTO'        => 'TZOffsetTo',
+        'TZURL'             => 'TZUrl',
+        'UID'               => 'UID',
+        'URL'               => 'URL',
+        'VERSION'           => 'Version',
+    );
+    
     /**
      * Property Name
      * @var string The RFC5545-designated property name
@@ -72,9 +128,32 @@ abstract class Property extends \qCal\Element {
     public function __construct($value = null, $params = array()) {
     
         foreach ($params as $pname => $pval) {
+            if (!($pval instanceof Parameter)) {
+                $pval = Parameter::generate($pname, $pval);
+            } else {
+                $pname = $pval->getName();
+            }
             $this->setParam($pname, $pval);
         }
         $this->setValue($value);
+    
+    }
+    
+    /**
+     * Generate property from string
+     * @param string The value to generate the property from
+     * @return qCal\Element\Property Property populated with the value passed in
+     */
+    static public function generate($name, $value) {
+    
+        try {
+            $className = 'qCal\\Element\\Property\\' . self::$propertyMap[$name];
+            \qCal\Loader::loadClass($className);
+            return new $className($value);
+        } catch (FileNotFound $e) {
+            // @todo is this the right exception?
+            throw new UndefinedException($name . ' is not a known property type');
+        }
     
     }
     
@@ -110,7 +189,7 @@ abstract class Property extends \qCal\Element {
     public function getParam($name) {
     
         $name = strtoupper($name);
-        if (array_key_exists($name, $this->params)) {
+        if ($this->hasParam($name)) {
             return $this->params[$name];
         }
         // @todo Throw exception?
@@ -125,6 +204,26 @@ abstract class Property extends \qCal\Element {
     public function getParams() {
     
         return $this->params;
+    
+    }
+    
+    /**
+     * Check if property has paramaters
+     */
+    public function hasParams() {
+    
+        return !empty($this->params);
+    
+    }
+    
+    /**
+     * Check if property has a specific parameter
+     * @param string Parameter name
+     * @return boolean True if property has parameter set
+     */
+    public function hasParam($name) {
+    
+        return array_key_exists($name, $this->params);
     
     }
     
@@ -150,6 +249,16 @@ abstract class Property extends \qCal\Element {
     public function getValue() {
     
         return $this->value;
+    
+    }
+    
+    /**
+     * Get this property's value as a string
+     * @todo This isn't right. Converting this to a string should include the name and params
+     */
+    public function __toString() {
+    
+        return $this->value->__toString();
     
     }
     

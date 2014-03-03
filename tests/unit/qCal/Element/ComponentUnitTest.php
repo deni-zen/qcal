@@ -3,7 +3,8 @@
  * qCal\Element\Component unit tests
  */
 namespace qCal\UnitTest\Element;
-use \qCal\Element\Component;
+use \qCal\Element\Component,
+    \qCal\Element\Property;
 
 class ComponentUnitTest extends \qCal\UnitTest\TestCase {
 

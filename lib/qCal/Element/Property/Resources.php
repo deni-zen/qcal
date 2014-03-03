@@ -8,7 +8,7 @@
  */
 namespace qCal\Element\Property;
 
-class Resources extends \qCal\Element\Property {
+class Resources extends \qCal\Element\Property\MultiValue {
 
     protected $name = "RESOURCES";
     

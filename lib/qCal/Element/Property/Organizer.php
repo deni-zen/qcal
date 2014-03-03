@@ -12,6 +12,6 @@ class Organizer extends \qCal\Element\Property {
 
     protected $name = "ORGANIZER";
     
-    protected $type = "CAL-ADRESS";
+    protected $type = "CAL-ADDRESS";
 
 }

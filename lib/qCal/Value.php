@@ -48,8 +48,8 @@ abstract class Value {
      */
     static public function generate($type, $value = null) {
     
-        $type = strtolower(ucfirst($type));
-        $typeClass = 'qCal\\Value\\' . $type;
+        $uctype = implode('', array_map('ucfirst', explode("-", ucfirst(strtolower($type)))));
+        $typeClass = 'qCal\\Value\\' . $uctype;
         try {
             Loader::loadClass($typeClass);
         } catch (Exception\FileNotFound $e) {

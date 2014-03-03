@@ -66,5 +66,17 @@ class DurationUnitTest extends \qCal\UnitTest\TestCase {
         $d = new DT\Duration($inputarray);
     
     }
+    
+    public function testNegativeDuration() {
+    
+        $sixhrs = new DT\Duration('-PT6H');
+        $tenwks = new DT\Duration('-P10W');
+        $twodys = new DT\Duration('-P2D');
+        
+        $this->assertEqual($sixhrs->toSeconds(), -21600);
+        $this->assertEqual($tenwks->toSeconds(), -6048000);
+        $this->assertEqual($twodys->toSeconds(), -172800);
+    
+    }
 
 }

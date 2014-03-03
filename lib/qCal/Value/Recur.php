@@ -272,6 +272,7 @@ class Recur extends \qCal\Value {
     public function toString() {
     
         // @todo Implement this once qCal\DateTime\Recur is written
+        return $this->value;
     
     }
     
@@ -281,6 +282,7 @@ class Recur extends \qCal\Value {
     protected function cast($value) {
     
         // @todo Implement this once qCal\DateTime\Recur is written
+        return $value;
     
     }
 

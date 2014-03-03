@@ -81,20 +81,33 @@
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  */
 namespace qCal\Element;
+use \qCal\Exception\Element\Property\UndefinedException as UndefinedPropertyException,
+    \qCal\Exception\Element\Component\UndefinedException as UndefinedComponentException;
 
 abstract class Component extends \qCal\Element {
 
+    /**
+     * @var array Mapping of component names to class names
+     * @todo I would prefer not to have to have a map, but I also don't want to
+     *       have the ugly class names I had before. So this is fine for now.
+     */
+    static protected $componentMap = array(
+        'DAYLIGHT'  => 'DayLight',
+        'STANDARD'  => 'Standard',
+        'VALARM'    => 'VAlarm',
+        'VCALENDAR' => 'VCalendar',
+        'VEVENT'    => 'VEvent',
+        'VFREEBUSY' => 'VFreeBusy',
+        'VJOURNAL'  => 'VJournal',
+        'VTIMEZONE' => 'VTimeZone',
+        'VTODO'     => 'VTodo',
+    );
+    
     /**
      * Component Name
      * @var string Component name
      */
     protected $name;
-    
-    /**
-     * Contains a list of allowed parent components.
-     * @var array Allowed parent components
-     */
-    // protected $allowedParents = array();
     
     /**
      * Contains this components children components
@@ -115,35 +128,36 @@ abstract class Component extends \qCal\Element {
     protected $parent;
     
     /**
-     * Required properties
-     * @var array A list of required properties
-     * @todo Required properties can actually change depending on whether other
-     *       properties are specified and what they are specified as. Because of
-     *       this, I think that this method of stating required properties isn't
-     *       the best way to go. Look at the OOP book and see if you can figure
-     *       out a better way to specify this type of rule.
-     */
-    // protected $requiredProperties = array();
-    
-    /**
-     * Certain properties are allowed on certain components. This contains a
-     * list of properties allowed on this component.
-     * @var array List of allowed properties
-     */
-    // protected $allowedProperties = array();
-    
-    /**
      * Class constructor
      * @param array A list of this component's properties
      * @param array A list of this component's sub-components
      */
     public function __construct($properties = array(), $components = array()) {
     
-        foreach ($components as $c) {
-            $this->attach($c);
+        foreach ($components as $name => $val) {
+            if (!($val instanceof Component)) {
+                $val = Component::generate($name, $val);
+            }
+            $this->attach($val);
         }
-        foreach($properties as $p) {
-            $this->addProperty($p);
+        foreach($properties as $name => $val) {
+            if (!($val instanceof Property)) {
+                $val = Property::generate($name, $val);
+            }
+            $this->addProperty($val);
+        }
+    
+    }
+    
+    static public function generate($name, $value) {
+    
+        try {
+            $className = 'qCal\\Element\\Component\\' . self::$componentMap[$name];
+            \qCal\Loader::loadClass($className);
+            return new $className($value);
+        } catch (FileNotFound $e) {
+            // @todo is this the right exception?
+            throw new UndefinedComponentException($name . ' is not a known component type');
         }
     
     }
@@ -160,60 +174,48 @@ abstract class Component extends \qCal\Element {
     
     /**
      * Get the component's child components
-     * @param string The type of child components to return 
+     * @param mixed The type of child components to return (can be an array of types)
      * @return array A list of this components child components
-     * @todo Maybe allow $type to be an array of types to return 
+     * @todo Test this
      */
     public function getChildren($type = null) {
     
         if (!is_null($type)) {
-            $type = strtoupper($type);
-            if (array_key_exists($type, $this->children)) {
-                return $this->children[$type];
+            if (is_array($type)) {
+                $ret = array();
+                foreach ($type as $t) {
+                    if (array_key_exists($t, $this->children)) {
+                        $ret = array_merge($ret, $this->children[$t]);
+                    }
+                }
+                return $ret;
+            } else {
+                $type = strtoupper($type);
+                if (array_key_exists($type, $this->children)) {
+                    return $this->children[$type];
+                }
+                return array();
             }
-            return array();
         }
         return $this->children;
     
     }
     
     /**
-     * Set this component's parent
-     * @param qCal\Element\Component The parent component
+     * Get component's children without sorting into type
+     * Sometimes it is necessary to just get a list of all child components in
+     * one big array in order to loop through them and perform tasks. In those
+     * cases, call this method instead of getChildren().
+     * @return array All children in an array
+     * @todo test this
      */
-    public function setParent(Component $component) {
+    public function getAllChildren() {
     
-        $this->parent = $component;
-        return $this;
-    
-    }
-    
-    /**
-     * Get this component's parent
-     * @return qCal\Element\Component The parent component
-     */
-    public function getParent() {
-    
-        return $this->parent;
-    
-    }
-    
-    /**
-     * Get root component (core iCalendar object)
-     * @return qCal\Element\Component\VCalendar The root VCalendar component
-     * #todo   I don't know if I really like the name of this method
-     */
-    public function getCore() {
-    
-        if (!$parent = $this->getParent()) {
-            return $this;
+        $ret = array();
+        foreach ($this->children as $type => $children) {
+            $ret = array_merge($ret, $children);
         }
-        while (true) {
-            $core = $parent;
-            if (!$parent = $parent->getParent()) {
-                return $core;
-            }
-        }
+        return $ret;
     
     }
     
@@ -221,6 +223,7 @@ abstract class Component extends \qCal\Element {
      * Attach a sub-component to this component as its child.
      * @param qCal\Element\Component A sub-component to be attached
      * @return qCal\Element\Component $this for chaining method calls
+     * @todo I don't think I like the name "attach" for this method. Change it.
      */
     public function attach(Component $component) {
     
@@ -231,14 +234,112 @@ abstract class Component extends \qCal\Element {
     }
     
     /**
-     * Add a property
-     * If property already exists, this method will add another without
-     * overwriting the existing property
+     * Add a new property to this component
      * @param qCal\Element\Property The property to be added
      */
     public function addProperty(Property $property) {
     
+        $property->setParent($this);
         $this->properties[$property->getName()][] = $property;
+        return $this;
+    
+    }
+    
+    /**
+     * Get all properties by type
+     * @return array A multi-dimensional array of properties, where keys are the
+     *               property names and values are an array of that type of prop
+     * @todo Test this
+     */
+    public function getProperties($type = null) {
+    
+        if (!is_null($type)) {
+            $type = strtoupper($type);
+            if (array_key_exists($type, $this->properties)) {
+                return $this->properties[$type];
+            }
+            return array();
+        }
+        return $this->properties;
+    
+    }
+    
+    /**
+     * Check if this component has a certain property defined
+     * @param mixed The name(s) of the property to test for. If an array is
+     *              passed in, return true if any of them are set
+     * @todo Test this
+     */
+    public function hasProperty($name) {
+    
+        if (is_array($name)) {
+            foreach ($name as $n) {
+                try {
+                    $this->getProperty($n);
+                    return true;
+                } catch (UndefinedPropertyException $e) {
+                    // do nothing
+                }
+            }
+        } else {
+            $props = $this->getProperties($name);
+            return !empty($props);
+        }
+    
+    }
+    
+    /**
+     * Get single property by name
+     * Sometimes it is useful to be able to get a property by name. The problem
+     * though, is that sometimes properties are set multiple times in a
+     * component. Because of this, this method has to return an iterator. That
+     * way, even if there are multiple properties returned, the return value
+     * doesn't have to be an array.
+     * @param string The name of the property to retrieve
+     * @return Element\Property The retrieved property
+     * @throws qCal\Exception\Element\Property\UndefinedException
+     * @todo Some properties can be set multiple times. In those cases, this
+     *       will only return the first property. Find a solution for this.
+     * @todo Maybe if the property is set multiple times, throw an exception
+     *       telling them they need to use getProperties()?
+     * @todo Test this
+     */
+    public function getProperty($name) {
+    
+        if ($this->hasProperty($name)) {
+            $props = $this->getProperties($name);
+            return $props[0];
+        }
+        throw new UndefinedPropertyException($name . ' property is not defined.');
+    
+    }
+    
+    /**
+     * Get all properties
+     * @return array A list of all properties, not sorted by type
+     * @todo Test this
+     */
+    public function getAllProperties() {
+    
+        $ret = array();
+        foreach ($this->properties as $type => $properties) {
+            $ret = array_merge($ret, $properties);
+        }
+        return $ret;
+    
+    }
+    
+    /**
+     * Remove property
+     * @param string The name of the property to be removed
+     * @return $this
+     * @todo Write unit test for this
+     */
+    public function removeProperty($name) {
+    
+        if ($this->hasProperty($name)) {
+            unset($this->properties[$name]);
+        }
         return $this;
     
     }

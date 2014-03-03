@@ -8,7 +8,7 @@
  */
 namespace qCal\Element\Property;
 
-class FreeBusy extends \qCal\Element\Property {
+class FreeBusy extends \qCal\Element\Property\MultiValue {
 
     protected $name = "FREEBUSY";
     

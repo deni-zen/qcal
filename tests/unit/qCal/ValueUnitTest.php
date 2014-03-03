@@ -102,6 +102,8 @@ class ValueUnitTest extends \qCal\UnitTest\TestCase {
         $this->assertEqual($ca->toString(), $castring);
         $genval = Value::generate('caladdress', $castring);
         $this->assertEqual($ca, $genval);
+        $genval = Value::generate('CAL-ADDRESS', $castring);
+        $this->assertEqual($ca, $genval);
     
     }
     

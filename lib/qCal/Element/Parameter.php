@@ -69,9 +69,38 @@
  *              Parameter\MultiValue, etc.)
  */
 namespace qCal\Element;
+use \qCal\Loader;
 
-abstract class Parameter extends Element {
+abstract class Parameter extends \qCal\Element {
 
+    /**
+     * @var array Mapping of component names to class names
+     * @todo I would prefer not to have to have a map, but I also don't want to
+     *       have the ugly class names I had before. So this is fine for now.
+     */
+    static protected $parameterMap = array(
+        'ALTREP'  => 'AltRep',
+        'CN'  => 'CN',
+        'CUTYPE'  => 'CUType',
+        'DELEGATED-FROM'  => 'DelegatedFrom',
+        'DELEGATED-TO'  => 'DelegatedTo',
+        'DIR'  => 'Dir',
+        'ENCODING'  => 'Encoding',
+        'FBTYPE'  => 'FBType',
+        'FMTTYPE'  => 'FmtType',
+        'LANGUAGE'  => 'Language',
+        'MEMBER'  => 'Member',
+        'PARTSTAT'  => 'PartStat',
+        'RANGE'  => 'Range',
+        'RELATED'  => 'Related',
+        'RELTYPE'  => 'RelType',
+        'ROLE'  => 'Role',
+        'RSVP'  => 'RSVP',
+        'SENTBY'  => 'SentBy',
+        'TZID'  => 'TZID',
+        'VALUE'  => 'Value',
+    );
+    
     /**
      * @var string The parameter name
      */
@@ -86,5 +115,43 @@ abstract class Parameter extends Element {
      * @var string The parameter's value
      */
     protected $value;
+    
+    public function __construct($value) {
+    
+        $this->setValue($value);
+    
+    }
+    
+    static public function generate($name, $value) {
+    
+        try {
+            $className = 'qCal\\Element\\Parameter\\' . self::$parameterMap[$name];
+            Loader::loadClass($className);
+            return new $className($value);
+        } catch (FileNotFound $e) {
+            // @todo create and throw this exception
+            // throw new UndefinedParameterException($name . ' is not a known component type');
+            throw new \Exception($name . ' is not a known parameter type');
+        }
+    
+    }
+    
+    public function getName() {
+    
+        return $this->name;
+    
+    }
+    
+    public function getValue() {
+    
+        return $this->value;
+    
+    }
+    
+    public function setValue($value) {
+    
+        $this->value = $value;
+    
+    }
 
 }
