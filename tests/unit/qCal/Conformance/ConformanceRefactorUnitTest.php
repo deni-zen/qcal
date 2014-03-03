@@ -224,7 +224,7 @@ class ConformanceRefactorUnitTest extends \qCal\UnitTest\TestCase {
             ->removeProperty('TZOFFSETFROM');
         $calendar->attach($tz);
         
-        $this->assertEqual($day->getName(), 'DAYLIGHT');
+        $this->assertEqual($dayaqqqqa   zZazZA->getName(), 'DAYLIGHT');
         $this->expectException(new RequiredPropertyException($day, array('DTSTART','TZOFFSETTO','TZOFFSETFROM')));
         
         $visitor = new Conf\Visitor();
