@@ -105,8 +105,6 @@ class VFreeBusy extends \qCal\Conformance\Component {
 
     /**
      * @var array Required properties
-     * The "VALARM" calendar component MUST include the "ACTION" and
-     * "TRIGGER" properties.
      */
     protected $reqProperties = array();
     
