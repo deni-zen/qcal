@@ -31,12 +31,6 @@
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
- * @todo        I have included the description portion of the RFC in the notes
- *              above because it contains information that is important to the
- *              conformance-checking of this property. Make sure all the rules
- *              specified there are checked in this class. Some of these rules
- *              would be better suited for the components rather than the
- *              property conformance classes.
  */
 namespace qCal\Conformance\Property;
 use \qCal\Element,

@@ -12,7 +12,6 @@
  *              considerable amount of time to run. Especially during TDD
  *              sprints. Nobody wants to do TDD while having to wait several
  *              seconds or worse for every refresh.
- * @todo        Implement autoloader
  * @todo        This code is using SimpleTest v1.01, Update to v1.10
  * @todo        In a few cases, assertEqual() seems to be asserting equality
  *              when its arguments aren't equal. It is doing basically a boolean

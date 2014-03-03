@@ -106,8 +106,6 @@
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
- * @todo        Address and implement any functionality for this value type that isn't
- *              already addressed by qCal\Value\Uro
  */
 namespace qCal\Value;
 
@@ -122,7 +120,6 @@ class DateTime extends \qCal\Value {
     
     protected function cast($value) {
     
-        // @todo return qCal_Date object
         return new \qCal\DateTime($value);
     
     }

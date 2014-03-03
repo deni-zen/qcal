@@ -31,7 +31,7 @@
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
  * @todo        Address and implement any functionality for this value type that isn't
- *              already addressed by qCal\Value\Uro
+ *              already addressed by qCal\Value\Uri
  */
 namespace qCal\Value;
 

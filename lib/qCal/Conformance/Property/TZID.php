@@ -21,7 +21,6 @@ class TZID extends \qCal\Conformance\Property {
 
     /**
      * @var array A list of components the property is allowed to be defined on.
-     * @todo I'm not sure if this list is correct
      */
     protected $allowedComponents = array('VTIMEZONE');
     

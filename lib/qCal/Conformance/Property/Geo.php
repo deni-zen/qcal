@@ -27,7 +27,6 @@ class Geo extends \qCal\Conformance\Property {
     /**
      * Check that this property is conformant
      * @param qCal\Element\Property
-     * @todo Free/Busy time periods must be in UTC time
      */
     public function conform(Element\Property\Geo $property) {
     

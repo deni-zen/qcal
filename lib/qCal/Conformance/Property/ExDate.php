@@ -23,9 +23,6 @@ class ExDate extends \qCal\Conformance\Property {
 
     /**
      * @var array A list of components the property is allowed to be defined on.
-     * @todo I took this list from the existing exdate class in the old qcal
-     *       library. I have no idea where that class got its list of allowed
-     *       components from, so this is likely wrong.
      */
     protected $allowedComponents = array('VEVENT','VTODO','VJOURNAL');
     

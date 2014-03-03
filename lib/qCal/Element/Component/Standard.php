@@ -1,8 +1,6 @@
 <?php
 /**
  * Standard TimeZone Sub-Component
- * @todo Maybe DayLight and Standard should extend a timezone subcomponent class
- * @todo Maybe they should also live in an Element\Component\TimeZone namespace
  */
 namespace qCal\Element\Component;
 
