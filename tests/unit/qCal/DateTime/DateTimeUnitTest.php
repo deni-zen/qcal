@@ -16,5 +16,14 @@ class DateTimeUnitTest extends \qCal\UnitTest\TestCase {
         
     
     }
+    
+    public function testConstructDateTimeWithString() {
+    
+        $dt = new DateTime('20140423T000000');
+        $this->assertEqual($dt->toDateTime(), '20140423T000000');
+        $this->assertEqual($dt->toDate(), '20140423');
+        $this->assertEqual($dt->toTime(), '000000');
+    
+    }
 
 }
