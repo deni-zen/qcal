@@ -25,5 +25,12 @@ class DateTimeUnitTest extends \qCal\UnitTest\TestCase {
         $this->assertEqual($dt->toTime(), '000000');
     
     }
+    
+    public function testGetTimestamp() {
+    
+        $dt = new DateTime('20140423T000000');
+        $this->assertEqual($dt->getTimestamp(), '1398211200');
+    
+    }
 
 }
