@@ -7,6 +7,8 @@
  * @author      Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright   (c) 2014 Luke Visinoni <luke.visinoni@gmail.com>
  * @license     GNU Lesser General Public License v3 (see LICENSE file)
+ * @todo        I don't think I can finish this class until qCal\DateTime\Recur
+ *              is finished because it relies on it.
  */
 namespace qCal\DateTime;
 
