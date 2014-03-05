@@ -18,7 +18,7 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
     
     }
     
-    public function testFreqYearly() {
+    /*public function testFreqYearly() {
     
         $start = new DT('20080423');
         $yrly = new Recur\Freq\Yearly(4);
@@ -34,11 +34,11 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
     
     }
     
-    /*public function testFreqMonthly() {
+    public function testFreqMonthly() {
     
         $start = new DT('20100423');
-        $yrly = new Recur\Freq\Monthly(2);
-        $recur = new Recur($start, $yrly);
+        $monthly = new Recur\Freq\Monthly(2);
+        $recur = new Recur($start, $monthly);
         $recur//->setByMonth(4, 5,-3)
               ->setByMonthDay(23, -10) 
               //->setByWeekNo(array(10, 20, 30, -10, -20))
@@ -49,5 +49,21 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
         $recur->getRecurrences(); 
     
     }*/
+    
+    public function testFreqDaily() {
+    
+        $start = new DT('20100423');
+        $daily = new Recur\Freq\Daily(1);
+        $recur = new Recur($start, $daily);
+        $recur->setByMonth(4, 5,-3)
+              //->setByMonthDay(23, -10) 
+              //->setByWeekNo(array(10, 20, 30, -10, -20))
+              //->setByDay('SA') 
+              //->setByYearDay(15)
+              //->setByHour(5, 10, 15, 20)
+              ->setUntil('now');
+        $recur->getRecurrences(); 
+    
+    }
 
 }
