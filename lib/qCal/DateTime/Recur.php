@@ -16,6 +16,8 @@ use \qCal\DateTime\Recur\Freq,
 
 class Recur {
 
+    protected $until;
+    
     protected $freq;
     
     protected $byDay;
@@ -127,15 +129,19 @@ class Recur {
     
     }
     
-    public function setUntil() {
+    public function setUntil($until) {
     
+        if (!($until instanceof \qCal\DateTime)) {
+            $until = new \qCal\DateTime($until);
+        }
+        $this->until = $until;
         return $this;
     
     }
     
     public function getUntil() {
     
-        return $this;
+        return $this->until;
     
     }
     
@@ -167,6 +173,30 @@ class Recur {
     
         $this->freq->getRecurrences();
         return $this;
+    
+    }
+    
+    /**
+     * @todo This is just a temporary method used while I am writing the Freq
+     *       classes
+     */
+    public function getRecurrences() {
+    
+        $start = $this->getStart();
+        $date = clone $start;
+        $freq = $this->getFreq();
+        while (true) {
+            if ($date->toUtc() > $this->getUntil()->toUtc()) break;
+            $recs = $this->getFreq()->getRecurrences($date);
+            //pr(array_keys($recs));
+            $date = $freq->getNextInterval($date);
+        }
+    
+    }
+    
+    protected function applyInterval(\qCal\DateTime $date) {
+    
+
     
     }
 

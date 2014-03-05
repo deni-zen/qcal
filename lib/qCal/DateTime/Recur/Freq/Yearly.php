@@ -28,15 +28,21 @@ use \qCal\DateTime as DT,
 
 class Yearly extends \qCal\DateTime\Recur\Freq {
 
+    public function getNextInterval(\qCal\DateTime $date) {
+    
+        return DT::rollover($date->getYear() + $this->getInterval(), $date->getMonth(), $date->getMonthDay(), $date->getHour(), $date->getMinute(), $date->getSecond());
+        
+    }
+    
     /**
      * As the recurrence loops over recurrence intervals, it needs to grab an
      * array of the recurrences for this interval
      */
-    public function getRecurrences() {
+    public function getRecurrences($start) {
     
         $rules = $this->getRulesArray();
         
-        $year = $this->recur->getStart()->getYear();
+        $year = $start->getYear();
         $daterecs = array();
         $recurrences = array();
         if (empty($rules['byMonth'])) {
@@ -73,6 +79,7 @@ class Yearly extends \qCal\DateTime\Recur\Freq {
                         } else {
                             // no number specified so get all the weekdays in the month (every Tuesday in November)
                             $dates = DT::getAllWeekdaysInMonth($day, $month, $year);
+                            // @todo need to add these to $daterecs
                         }
 
                     }
