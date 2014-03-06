@@ -48,7 +48,7 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
               ->setUntil('now');
         $recur->getRecurrences(); 
     
-    }*/
+    }
     
     public function testFreqDaily() {
     
@@ -59,6 +59,22 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
               ->setByMonthDay(1, 2, 3, 10, 23, -10) // but only if it falls on the 23rd or the 10th to last day of the month
               //->setByWeekNo(array(10, 20, 30, -10, -20))
               ->setByDay('SA') // and only if it falls on a saturday
+              //->setByYearDay(15)
+              ->setByHour(5, 10, 15, 20)
+              ->setUntil('now'); // until now
+        $recur->getRecurrences(); 
+    
+    }*/
+    
+    public function testFreqWeekly() {
+    
+        $start = new DT('20100423');
+        $weekly = new Recur\Freq\Weekly(4); // every other week
+        $recur = new Recur($start, $weekly);
+        $recur->setByMonth(1, 2, 3) // every other week in jan, feb, and march
+              //->setByMonthDay(1, 2, 3, 10, 23, -10) // but only if it falls on the 23rd or the 10th to last day of the month
+              //->setByWeekNo(array(10, 20, 30, -10, -20))
+              ->setByDay('SA','SU') // every saturday and sunday of every other week
               //->setByYearDay(15)
               ->setByHour(5, 10, 15, 20)
               ->setUntil('now'); // until now

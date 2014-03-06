@@ -190,7 +190,8 @@ class Recur {
             if ($date->toUtc() > $this->getUntil()->toUtc()) break;
             $recs = $this->getFreq()->getRecurrences($date);
             if (!empty($recs)) pr(array_keys($recs));
-            //pr(array_keys($recs));
+            // pr(array_keys($recs));
+            // pr($date->toUtc());
             $date = $freq->getNextInterval($date);
             
             $i++;

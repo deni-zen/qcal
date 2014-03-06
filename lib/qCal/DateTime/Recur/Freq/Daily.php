@@ -110,6 +110,7 @@ class Daily extends \qCal\DateTime\Recur\Freq {
             }
         }
         
+        // @todo Throw more specific exception once exceptions are re-organized/refactored
         if (!empty($rules['byWeekNo'])) {
             throw new \Exception('BYWEEKNO cannot be specified for MONTHLY frequency.');
         }

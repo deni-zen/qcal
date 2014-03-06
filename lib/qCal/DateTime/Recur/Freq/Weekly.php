@@ -1,6 +1,6 @@
 <?php
 /**
- * Date/Time Recurrence Monthly Frequency Class
+ * Date/Time Recurrence Weekly Frequency Class
  * Recurrence rules affect yearly recurrences in the following ways:
  * 
  *      ByYearDay - Sets the day of the year the recurrence will take place
@@ -26,19 +26,16 @@ namespace qCal\DateTime\Recur\Freq;
 use \qCal\DateTime as DT,
     \qCal\DateTime\Recur\Recurrence;
 
-class Monthly extends \qCal\DateTime\Recur\Freq {
+class Weekly extends \qCal\DateTime\Recur\Freq {
 
     public function getNextInterval(\qCal\DateTime $date) {
     
         $year = $date->getYear();
-        $month = $date->getMonth() + $this->getInterval();
-        // @todo I don't think this is necessary... rollover should take care of it
-        if ($month > 12) {
-            $year++;
-            $month = $month - 12;
-        }
-        return DT::rollover($year, $month, $date->getMonthDay(), $date->getHour(), $date->getMinute(), $date->getSecond());
-        
+        // @todo this method needs to support WKST but this is fine for now
+        $week = $date->getWeekNo();
+        // rollover should take care of any change in month or year
+        return DT::rollover($year, $date->getMonth(), $date->getMonthDay() + (7 * $this->getInterval()), $date->getHour(), $date->getMinute(), $date->getSecond());
+    
     }
     
     /**
@@ -65,44 +62,39 @@ class Monthly extends \qCal\DateTime\Recur\Freq {
             if (!in_array($start->getMonth(), $months)) return array();
         }
         
-        if (!empty($rules['byMonthDay'])) {
-            foreach ($rules['byMonthDay'] as $monthDay) {
-            
-                if ($monthDay < 0) {
-                    $monthDay = $start->getDaysInMonth() + $monthDay;
-                }
-                $daterecs[] = array('year' => $start->getYear(), 'month' => $start->getMonth(), 'day' => $monthDay);
-            
-            }
-        }
-        
         if (!empty($rules['byDay'])) {
+        
             foreach ($rules['byDay'] as $byDay) {
             
+                // this just makes sure no invalid BYDAY values are specified
                 if (preg_match('/([+-]?[0-9]+)?(MO|TU|WE|TH|FR|SA|SU)?/i', $byDay, $matches)) {
                     list($string, $num, $day) = $matches;
                     if ((int) $num) {
-                        // there was a number specified, so get that particular weekday of the month (ie: 3rd Sunday in November)
-                        $date = DT::getXthWeekdayOfMonth($num, $day, $start->getMonth(), $start->getYear());
-                        $daterecs[] = array('year' => $date->getYear(), 'month' => $date->getMonth(), 'day' => $date->getMonthDay());
-                    } else {
-                        // no number specified so get all the weekdays in the month (every Tuesday in November)
-                        $dates = DT::getAllWeekdaysInMonth($day, $start->getMonth(), $start->getYear());
-                        foreach ($dates as $date) {
-                            $daterecs[] = array('year' => $date->getYear(), 'month' => $date->getMonth(), 'day' => $date->getMonthDay());
-                        }
+                        // @todo Throw more specific exception once exceptions are re-organized/refactored
+                        throw new RecurException('BYDAY rule must not specify an ordinal value for WEEKLY frequency types');
                     }
                 }
             
             }
+            
+            $dates = DT::getWeekdaysInWeek($rules['byDay'], $start->getWeekNo(), $start->getYear());
+            foreach ($dates as $date) {
+                $daterecs[] = array('year' => $date->getYear(), 'month' => $date->getMonth(), 'day' => $date->getMonthDay());
+            }
+        
         }
         
+        // @todo Throw specific exceptions here
         if (!empty($rules['byWeekNo'])) {
-            throw new \Exception('BYWEEKNO cannot be specified for MONTHLY frequency.');
+            throw new \Exception('BYWEEKNO cannot be specified for WEEKLY frequency.');
         }
         if (!empty($rules['byYearDay'])) {
-            throw new \Exception('BYYEARDAY cannot be specified for MONTHLY frequency.');
+            throw new \Exception('BYYEARDAY cannot be specified for WEEKLY frequency.');
         }
+        if (!empty($rules['byMonthDay'])) {
+            throw new \Exception('BYMONTHDAY cannot be specified for WEEKLY frequency.');
+        }
+        
         
         // once we have all of the dates, create recurrences for all the
         // times as well

@@ -252,6 +252,41 @@ class DateTime {
     }
     
     /**
+     * Returns date/time objects for specified weekdays ('MO','TU','WE') in
+     * specified weekday of the year
+     * @todo Allow user to specify WKST (week start day)
+     * @todo This method is EXTREMELY inefficient. Fix it.
+     */
+    static public function getWeekdaysInWeek($weekDays, $weekNo, $year) {
+    
+        $weekDays = (array) $weekDays;
+        if ($weekNo > 53 || $weekNo < -53 || $weekNo == 0) {
+            // @todo use the right exception here
+            throw new Exception\DateTime\Exception('Invalid week number specified: ' . $weekNo);
+        }
+        if ($weekNo < 0) {
+            $weekNo = 53 + $weekNo;
+        }
+        $day = 1;
+        $date = self::rollover($year, 1, $day, 0, 0, 0);
+        while ($date->getWeekNo() != $weekNo) {
+            // @todo find a more efficient way to do this
+            $date = self::rollover($year, 1, $day, 0, 0, 0);
+            $day++;
+        }
+        // found week number, so now find week days
+        $dates = array();
+        foreach ($weekDays as $wday) {
+            for ($i = 0; $i < 7; $i++) {
+                $date = self::rollover($year, 1, $day + $i, 0, 0, 0);
+                if ($date->getDay() == $wday) $dates[] = $date;
+            }
+        }
+        return $dates;
+    
+    }
+    
+    /**
      * Format date/time
      * Uses subset of PHP's date() class
      * @param string The format string
