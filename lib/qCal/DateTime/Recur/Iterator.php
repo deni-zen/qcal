@@ -94,7 +94,7 @@ class Iterator implements \Iterator {
     
         $this->returned = 0;
         $this->pos = 0;
-        $this->date = $this->recur->getStart();
+        $this->date = $this->range->getStart();
     
     }
     
