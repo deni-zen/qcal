@@ -195,7 +195,6 @@ class Recur {
             $date = $freq->getNextInterval($date);
             
             $i++;
-            if ($i > 300) break;
         }
     
     }

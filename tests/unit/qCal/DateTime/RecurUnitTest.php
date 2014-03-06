@@ -64,7 +64,7 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
               ->setUntil('now'); // until now
         $recur->getRecurrences(); 
     
-    }*/
+    }
     
     public function testFreqWeekly() {
     
@@ -78,6 +78,54 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
               //->setByYearDay(15)
               ->setByHour(5, 10, 15, 20)
               ->setUntil('now'); // until now
+        $recur->getRecurrences(); 
+    
+    }
+    
+    public function testFreqHourly() {
+    
+        $start = new DT('20140304T000000'); // start yesterday
+        $hourly = new Recur\Freq\Hourly(4); // every four hours
+        $recur = new Recur($start, $hourly);
+        $recur->setByMonth(3) // only in jan, feb and march
+              ->setByMonthDay(1, 2, 3,4,5, -1, -2, -3) // only in first and last three days of the month
+              ->setByDay('MO','TU','WE','TH','FR') // only on weekdays
+              //->setByYearDay(15)
+              //->setByHour(8,9,10,11,12,13,14,15,16,17,18,19,20) // only in these times
+              //->setByMinute(0, 15, 30,45)
+              ->setUntil('now'); // until now
+        $recur->getRecurrences(); 
+    
+    }
+    
+    public function testFreqMinutely() {
+    
+        $start = new DT('20131201T000000'); // start yesterday
+        $minutely = new Recur\Freq\Minutely(15); // every 15 minutes
+        $recur = new Recur($start, $minutely);
+        $recur->setByMonth(1,2,3) // only in jan, feb and march
+              ->setByMonthDay(1, 2, 3,4,5, -1, -2, -3) // only in first and last three days of the month
+              ->setByDay('MO','TU','WE','TH','FR') // only on weekdays
+              ->setByYearDay(15, 20, 30, 100, -100, -50, -10, -1)
+              //->setByHour(8,9,10,11,12,13,14,15,16,17,18,19,20) // only in these times
+              //->setByMinute(0, 15, 30,45)
+              ->setUntil('now'); // until now
+        $recur->getRecurrences(); 
+    
+    }*/
+    
+    public function testFreqSecondly() {
+    
+        $start = new DT('20131231T000000'); // start yesterday
+        $secondly = new Recur\Freq\Secondly(15); // every 15 seconds (hour)
+        $recur = new Recur($start, $secondly);
+        $recur->setByMonth(12) // only in jan, feb and march
+              ->setByMonthDay(1, 2, 3,4,5, -1, -2, -3) // only in first and last three days of the month
+              //->setByDay('MO','TU','WE','TH','FR') // only on weekdays
+              //->setByYearDay(15, 20, 30, 100, -100, -50, -10, -1)
+              //->setByHour(8,9,10,11,12,13,14,15,16,17,18,19,20) // only in these times
+              //->setByMinute(0, 15, 30,45)
+              ->setUntil('20131231T230000'); // until now
         $recur->getRecurrences(); 
     
     }
