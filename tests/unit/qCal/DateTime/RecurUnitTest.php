@@ -53,15 +53,15 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
     public function testFreqDaily() {
     
         $start = new DT('20100423');
-        $daily = new Recur\Freq\Daily(1);
+        $daily = new Recur\Freq\Daily(2); // every other day
         $recur = new Recur($start, $daily);
-        $recur->setByMonth(4, 5,-3)
-              //->setByMonthDay(23, -10) 
+        $recur->setByMonth(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) // every other day in jan, feb, and march
+              ->setByMonthDay(1, 2, 3, 10, 23, -10) // but only if it falls on the 23rd or the 10th to last day of the month
               //->setByWeekNo(array(10, 20, 30, -10, -20))
-              //->setByDay('SA') 
+              ->setByDay('SA') // and only if it falls on a saturday
               //->setByYearDay(15)
-              //->setByHour(5, 10, 15, 20)
-              ->setUntil('now');
+              ->setByHour(5, 10, 15, 20)
+              ->setUntil('now'); // until now
         $recur->getRecurrences(); 
     
     }

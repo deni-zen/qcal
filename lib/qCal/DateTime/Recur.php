@@ -185,11 +185,16 @@ class Recur {
         $start = $this->getStart();
         $date = clone $start;
         $freq = $this->getFreq();
+        $i = 0;
         while (true) {
             if ($date->toUtc() > $this->getUntil()->toUtc()) break;
             $recs = $this->getFreq()->getRecurrences($date);
+            if (!empty($recs)) pr(array_keys($recs));
             //pr(array_keys($recs));
             $date = $freq->getNextInterval($date);
+            
+            $i++;
+            if ($i > 300) break;
         }
     
     }
