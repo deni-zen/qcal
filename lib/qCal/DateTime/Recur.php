@@ -16,7 +16,19 @@ use \qCal\DateTime\Recur\Freq,
 
 class Recur {
 
+    /**
+     * Current pointer position
+     */
+    protected $pos;
+    
+    /**
+     * Current pointer date
+     */
+    protected $posDate;
+    
     protected $until;
+    
+    protected $count;
     
     protected $freq;
     
@@ -59,6 +71,7 @@ class Recur {
         
         $freq->setRecur($this);
         $this->setFreq($freq);
+        $this->rewind();
     
     }
     
@@ -145,15 +158,16 @@ class Recur {
     
     }
     
-    public function setCount() {
+    public function setCount($count) {
     
+        $this->count = $count;
         return $this;
     
     }
     
     public function getCount() {
     
-        
+        return $this->count;
     
     }
     
@@ -166,13 +180,6 @@ class Recur {
     public function getWeekStart() {
     
         
-    
-    }
-    
-    public function count() {
-    
-        $this->freq->getRecurrences();
-        return $this;
     
     }
     
@@ -189,7 +196,7 @@ class Recur {
         while (true) {
             if ($date->toUtc() > $this->getUntil()->toUtc()) break;
             $recs = $this->getFreq()->getRecurrences($date);
-            if (!empty($recs)) pr(array_keys($recs));
+            // if (!empty($recs)) pr(array_keys($recs));
             // pr(array_keys($recs));
             // pr($date->toUtc());
             $date = $freq->getNextInterval($date);
@@ -199,10 +206,34 @@ class Recur {
     
     }
     
-    protected function applyInterval(\qCal\DateTime $date) {
+    /**
+     * Because it is possible for recurrences to go on forever and not have a
+     * single recurrence, it is not feasible to provide a nextRecurrence()
+     * method unless COUNT or UNTIL are provided. Because of this, I have
+     * provided this method. What this does is get an iterator for a range of
+     * time. Provide an end time or a period of time and it will give you an
+     * iterator that can find all recurrences within the range specified.
+     */
+    public function getIterator($end = null) {
     
-
+        return new Recur\Iterator($this, $end);
     
     }
+    
+    /*
+    public function getRecurrenceRange($start, $end) {
+    
+        if (is_null($start)) {
+            $start = $this->getStart();
+        }
+        if (!($start instanceof \qCal\DateTime)) {
+            $start = new \qCal\DateTime($start);
+        }
+        if (!($end instanceof \qCal\DateTime)) {
+            $end = new \qCal\DateTime($end);
+        }
+    
+    }
+    */
 
 }

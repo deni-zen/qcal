@@ -139,7 +139,7 @@ class Daily extends \qCal\DateTime\Recur\Freq {
         ksort($recurrences);
         $return = array();
         foreach ($recurrences as $dt) {
-            $return[$dt->toUtcDateTime()] = new Recurrence($dt);
+            $return[] = new Recurrence($dt);
         }
         return $return;
     

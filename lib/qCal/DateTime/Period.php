@@ -4,7 +4,7 @@
  * A period represents a period of time spanning from one date/time to another
  */
 namespace qCal\DateTime;
-use \qCal\DateTime,
+use \qCal\DateTime as DT,
     \qCal\DateTime\Duration,
     \qCal\Exception\DateTime\DurationException,
     \qCal\Exception\DateTime\PeriodException;
@@ -15,14 +15,18 @@ class Period {
     
     protected $end;
     
-    public function __construct(DateTime $start, $end) {
+    public function __construct($start, $end) {
     
-        if (!$end instanceof DateTime) {
-            if (!$end instanceof Duration) {
-                throw new PeriodException("Second argument of qCal\DateTime\Period::__construct() must be one of either qCal\DateTime\Period or qCal\DateTime\Duration");
+        if (!($start instanceof DT)) {
+            $start = new DT($start);
+        }
+        if (!($end instanceof DT)) {
+            if ($end instanceof Duration) {
+                $endTs = $start->getTimestamp() + $end->toSeconds();
+                $end = new DT('@' . $endTs);
+            } else {
+                $end = new DT($end);
             }
-            $endTs = $start->getTimestamp() + $end->toSeconds();
-            $end = new DateTime('@' . $endTs);
         }
         if ($start->getTimestamp() > $end->getTimestamp()) {
             throw new PeriodException('Cannot create negative time period');

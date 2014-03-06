@@ -22,6 +22,11 @@ class Recurrence {
     protected $start;
     
     /**
+     * recurrence-id
+     */
+    protected $id;
+    
+    /**
      * Class constructor
      * Recurrence can have start and end date/time. Leave out end date/time to
      * represent a recurrence that just takes place at a certain date/time with 
@@ -36,6 +41,8 @@ class Recurrence {
         if (!is_null($end)) {
             $this->setEnd($end);
         }
+        // @todo Research recurrence id and make this right
+        $this->id = $this->getStart()->toUtc();
     
     }
     
@@ -84,6 +91,15 @@ class Recurrence {
     public function getEnd() {
     
         return $this->end;
+    
+    }
+    
+    /**
+     * Get recurrence-id
+     */
+    public function getId() {
+    
+        return $this->id;
     
     }
 

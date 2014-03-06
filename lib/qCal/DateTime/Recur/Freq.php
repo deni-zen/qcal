@@ -51,11 +51,7 @@ abstract class Freq {
     
     }
     
-    public function getNextInterval(\qCal\DateTime $date) {
-    
-        
-    
-    }
+    abstract public function getNextInterval(\qCal\DateTime $date);
     
     protected function getRulesArray() {
     
