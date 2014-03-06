@@ -35,6 +35,10 @@ class RecurUnitTest extends \qCal\UnitTest\TestCase {
         foreach ($iter as $rec) {
             pr($rec->getStart()->toUtc());
         }
+        echo 'break';
+        foreach ($iter as $rec) {
+            pr($rec->getStart()->toUtc());
+        }
     
     }
     

@@ -72,8 +72,9 @@ class Iterator implements \Iterator {
     
     protected function init() {
     
-        $this->date = $this->range->getStart();
-        $this->recurrences = $this->loadRecurrences($this->date);
+        $this->rewind();
+        //$this->date = $this->range->getStart();
+        //$this->recurrences = $this->loadRecurrences($this->date);
     
     }
     
@@ -95,6 +96,7 @@ class Iterator implements \Iterator {
         $this->returned = 0;
         $this->pos = 0;
         $this->date = $this->range->getStart();
+        $this->recurrences = $this->loadRecurrences($this->date);
     
     }
     
